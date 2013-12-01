@@ -2475,10 +2475,10 @@ cfdebug_print(w, t, l)
 	int l;
 {
 	if (w) {
-		dprintf(LOG_DEBUG, FNAME,
+		debugprintf(LOG_DEBUG, FNAME,
 		    "<%d>%s [%s] (%d)", yy_start, w, t, l);
 	} else {
-		dprintf(LOG_DEBUG, FNAME,
+		debugprintf(LOG_DEBUG, FNAME,
 		    "<%d>[%s] (%d)", yy_start, t, l);
 	}
 }
@@ -2494,7 +2494,7 @@ yyerror0(int level, char *s, va_list ap)
 	if (bp < ep)
 		bp += vsnprintf(bp, ep - bp, s, ap);
 
-	dprintf(level, FNAME, ebuf);
+	debugprintf(level, FNAME, ebuf);
 }
 
 void
@@ -2532,7 +2532,7 @@ cfswitch_buffer(incl)
 	FILE *fp;
 
 	if (incstackp >= MAX_INCLUDE_DEPTH) {
-		dprintf(LOG_ERR, FNAME, "cfparse: includes nested too deeply");
+		debugprintf(LOG_ERR, FNAME, "cfparse: includes nested too deeply");
 		return (-1);
 	}
 	incstack[incstackp].path = configfilename;
@@ -2541,7 +2541,7 @@ cfswitch_buffer(incl)
 
 	fp = fopen(path, "r");
 	if (fp == NULL) {
-		dprintf(LOG_ERR, FNAME, "cfparse: fopen(%s): %s",
+		debugprintf(LOG_ERR, FNAME, "cfparse: fopen(%s): %s",
 			path, strerror(errno));
 		if (errno == ENOENT)
 			return (0);
@@ -2563,7 +2563,7 @@ cfparse(conf)
 {
 	configfilename = conf;
 	if ((yyin = fopen(configfilename, "r")) == NULL) {
-		dprintf(LOG_ERR, FNAME, "cfparse: fopen(%s): %s",
+		debugprintf(LOG_ERR, FNAME, "cfparse: fopen(%s): %s",
 			configfilename, strerror(errno));
 		if (errno == ENOENT)
 			return (0);
