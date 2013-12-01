@@ -40,11 +40,7 @@
 #include <errno.h>
 #include <syslog.h>
 #include <string.h>
-#ifdef HAVE_STDARG_H
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 
 #include "dhcp6.h"
 #include "config.h"
@@ -366,11 +362,7 @@ void
 yyerror(char *s, ...)
 {
 	va_list ap;
-#ifdef HAVE_STDARG_H
 	va_start(ap, s);
-#else
-	va_start(ap);
-#endif
 	yyerror0(LOG_ERR, s, ap);
 	va_end(ap);
 	yyerrorcount++;
@@ -380,11 +372,7 @@ void
 yywarn(char *s, ...)
 {
 	va_list ap;
-#ifdef HAVE_STDARG_H
 	va_start(ap, s);
-#else
-	va_start(ap);
-#endif
 	yyerror0(LOG_WARNING, s, ap);
 	va_end(ap);
 }

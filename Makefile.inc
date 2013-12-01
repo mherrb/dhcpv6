@@ -14,6 +14,5 @@ CFLAGS+=	-DSYSCONFDIR=\"/etc/\" \
 		-DHAVE_ANSI_FUNC=1 \
 		-DHAVE_TAILQ_FOREACH_REVERSE_OLD=1 \
 		-DHAVE_SA_LEN=1 \
-		-DHAVE_STDARG_H
 
 .include <bsd.obj.mk>
