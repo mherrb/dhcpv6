@@ -48,9 +48,9 @@
 extern int lineno;
 extern int cfdebug;
 
-extern void yywarn __P((char *, ...))
+extern void yywarn(char *, ...)
 	__attribute__((__format__(__printf__, 1, 2)));
-extern void yyerror __P((char *, ...))
+extern void yyerror(char *, ...)
 	__attribute__((__format__(__printf__, 1, 2)));
 
 #define MAKE_NAMELIST(l, n, p) do { \
@@ -93,12 +93,12 @@ struct cf_list *cf_nisp_list, *cf_nisp_name_list;
 struct cf_list *cf_bcmcs_list, *cf_bcmcs_name_list;
 long long cf_refreshtime = -1;
 
-extern int yylex __P((void));
-extern int cfswitch_buffer __P((char *));
-static int add_namelist __P((struct cf_namelist *, struct cf_namelist **));
-static void cleanup __P((void));
-static void cleanup_namelist __P((struct cf_namelist *));
-static void cleanup_cflist __P((struct cf_list *));
+extern int yylex(void);
+extern int cfswitch_buffer(char *);
+static int add_namelist(struct cf_namelist *, struct cf_namelist **);
+static void cleanup(void);
+static void cleanup_namelist(struct cf_namelist *);
+static void cleanup_cflist(struct cf_list *);
 %}
 
 %token INTERFACE IFNAME
