@@ -5,8 +5,6 @@ CFLAGS+=	-I${.CURDIR}/..
 CFLAGS+=	-DSYSCONFDIR=\"/etc/\" \
 		-DLOCALDBDIR=\"/var/db\" \
 		-DYYTEXT_POINTER=1 \
-		-DHAVE_SYS_TIME_H=1 \
-		-DTIME_WITH_SYS_TIME=1 \
 		-DHAVE_STRUCT_TM_TM_ZONE=1 \
 		-DHAVE_TM_ZONE=1 \
 		-DHAVE_SIG_ATOMIC_T=1 \
@@ -14,5 +12,7 @@ CFLAGS+=	-DSYSCONFDIR=\"/etc/\" \
 		-DHAVE_ANSI_FUNC=1 \
 		-DHAVE_TAILQ_FOREACH_REVERSE_OLD=1 \
 		-DHAVE_SA_LEN=1 \
+
+CFLAGS+=	-Wall -Werror
 
 .include <bsd.obj.mk>
