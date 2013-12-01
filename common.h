@@ -179,11 +179,3 @@ extern void duidfree __P((struct duid *));
 extern int ifaddrconf __P((ifaddrconf_cmd_t, char *, struct sockaddr_in6 *,
 			   int, int, int));
 extern int safefile __P((const char *));
-
-/* missing */
-#ifndef HAVE_STRLCAT
-extern size_t strlcat __P((char *, const char *, size_t));
-#endif
-#ifndef HAVE_STRLCPY
-extern size_t strlcpy __P((char *, const char *, size_t));
-#endif
