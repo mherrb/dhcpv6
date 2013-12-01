@@ -840,7 +840,7 @@ random_between(x, y)
 	ratio = 1 << 16;
 	while ((y - x) * ratio < (y - x))
 		ratio = ratio / 2;
-	return (x + ((y - x) * (ratio - 1) / random() & (ratio - 1)));
+	return (x + ((y - x) * (ratio - 1) / arc4random() & (ratio - 1)));
 }
 
 int
@@ -2838,7 +2838,7 @@ dhcp6_reset_timer(ev)
 		 * and the algorithm for these two cases are the same.
 		 * [RFC3315 18.1.5]
 		 */
-		ev->retrans = (random() % (SOL_MAX_DELAY));
+		ev->retrans = arc4random_uniform(SOL_MAX_DELAY);
 		break;
 	default:
 		if (ev->state == DHCP6S_SOLICIT && ev->timeouts == 0) {
@@ -2848,10 +2848,10 @@ dhcp6_reset_timer(ev)
 			 * greater than 0.
 			 * [RFC3315 17.1.2]
 			 */
-			r = (double)((random() % 1000) + 1) / 10000;
+			r = (double)(arc4random_uniform(1000) + 1) / 10000;
 			n = ev->init_retrans + r * ev->init_retrans;
 		} else {
-			r = (double)((random() % 2000) - 1000) / 10000;
+			r = (double)(arc4random_uniform(2000) - 1000) / 10000;
 
 			if (ev->timeouts == 0) {
 				n = ev->init_retrans + r * ev->init_retrans;

@@ -250,7 +250,6 @@ main(argc, argv)
 	TAILQ_INIT(&bcmcslist);
 	TAILQ_INIT(&bcmcsnamelist);
 
-	srandom(time(NULL) & getpid());
 	while ((ch = getopt(argc, argv, "c:dDfk:n:p:P:")) != -1) {
 		switch (ch) {
 		case 'c':
