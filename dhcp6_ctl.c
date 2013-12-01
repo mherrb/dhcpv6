@@ -66,7 +66,7 @@ struct dhcp6_commandctx {
 	char inputbuf[1024];	/* input buffer */
 	ssize_t input_len;
 	ssize_t input_filled;
-	int (*callback) __P((char *, ssize_t));
+	int (*callback)(char *, ssize_t);
 };
 
 int
@@ -196,7 +196,7 @@ dhcp6_ctl_authinit(keyfile, keyinfop, digestlenp)
 int
 dhcp6_ctl_acceptcommand(sl, callback)
 	int sl;
-	int (*callback) __P((char *, ssize_t));
+	int (*callback)(char *, ssize_t);
 {
 	int s;
 	struct sockaddr_storage from_ss;

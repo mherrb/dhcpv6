@@ -136,77 +136,77 @@ static struct keyinfo *ctlkey = NULL;
 static int ctldigestlen;
 static char *pid_file = DHCP6S_PIDFILE;
 
-static inline int get_val32 __P((char **, int *, u_int32_t *));
-static inline int get_val __P((char **, int *, void *, size_t));
+static inline int get_val32(char **, int *, u_int32_t *);
+static inline int get_val(char **, int *, void *, size_t);
 
-static void usage __P((void));
-static void server6_init __P((void));
-static void server6_mainloop __P((void));
-static int server6_do_ctlcommand __P((char *, ssize_t));
-static void server6_reload __P((void));
-static void server6_stop __P((void));
-static void server6_recv __P((int));
-static void process_signals __P((void));
-static void server6_signal __P((int));
-static void free_relayinfo __P((struct relayinfo *));
-static int process_relayforw __P((struct dhcp6 **, struct dhcp6opt **,
-    struct relayinfolist *, struct sockaddr *));
-static int set_statelessinfo __P((int, struct dhcp6_optinfo *));
-static int react_solicit __P((struct dhcp6_if *, struct dhcp6 *, ssize_t,
-    struct dhcp6_optinfo *, struct sockaddr *, int, struct relayinfolist *));
-static int react_request __P((struct dhcp6_if *, struct in6_pktinfo *,
+static void usage(void);
+static void server6_init(void);
+static void server6_mainloop(void);
+static int server6_do_ctlcommand(char *, ssize_t);
+static void server6_reload(void);
+static void server6_stop(void);
+static void server6_recv(int);
+static void process_signals(void);
+static void server6_signal(int);
+static void free_relayinfo(struct relayinfo *);
+static int process_relayforw(struct dhcp6 **, struct dhcp6opt **,
+    struct relayinfolist *, struct sockaddr *);
+static int set_statelessinfo(int, struct dhcp6_optinfo *);
+static int react_solicit(struct dhcp6_if *, struct dhcp6 *, ssize_t,
+    struct dhcp6_optinfo *, struct sockaddr *, int, struct relayinfolist *);
+static int react_request(struct dhcp6_if *, struct in6_pktinfo *,
     struct dhcp6 *, ssize_t, struct dhcp6_optinfo *, struct sockaddr *, int,
-    struct relayinfolist *));
-static int react_renew __P((struct dhcp6_if *, struct in6_pktinfo *,
+    struct relayinfolist *);
+static int react_renew(struct dhcp6_if *, struct in6_pktinfo *,
     struct dhcp6 *, ssize_t, struct dhcp6_optinfo *, struct sockaddr *, int,
-    struct relayinfolist *));
-static int react_rebind __P((struct dhcp6_if *, struct dhcp6 *, ssize_t,
-    struct dhcp6_optinfo *, struct sockaddr *, int, struct relayinfolist *));
-static int react_release __P((struct dhcp6_if *, struct in6_pktinfo *,
+    struct relayinfolist *);
+static int react_rebind(struct dhcp6_if *, struct dhcp6 *, ssize_t,
+    struct dhcp6_optinfo *, struct sockaddr *, int, struct relayinfolist *);
+static int react_release(struct dhcp6_if *, struct in6_pktinfo *,
     struct dhcp6 *, ssize_t, struct dhcp6_optinfo *, struct sockaddr *, int,
-    struct relayinfolist *));
-static int react_decline __P((struct dhcp6_if *, struct in6_pktinfo *,
+    struct relayinfolist *);
+static int react_decline(struct dhcp6_if *, struct in6_pktinfo *,
     struct dhcp6 *, ssize_t, struct dhcp6_optinfo *, struct sockaddr *, int,
-    struct relayinfolist *));
-static int react_confirm __P((struct dhcp6_if *, struct in6_pktinfo *,
+    struct relayinfolist *);
+static int react_confirm(struct dhcp6_if *, struct in6_pktinfo *,
     struct dhcp6 *, ssize_t,
-    struct dhcp6_optinfo *, struct sockaddr *, int, struct relayinfolist *));
-static int react_informreq __P((struct dhcp6_if *, struct dhcp6 *, ssize_t,
-    struct dhcp6_optinfo *, struct sockaddr *, int, struct relayinfolist *));
-static int server6_send __P((int, struct dhcp6_if *, struct dhcp6 *,
+    struct dhcp6_optinfo *, struct sockaddr *, int, struct relayinfolist *);
+static int react_informreq(struct dhcp6_if *, struct dhcp6 *, ssize_t,
+    struct dhcp6_optinfo *, struct sockaddr *, int, struct relayinfolist *);
+static int server6_send(int, struct dhcp6_if *, struct dhcp6 *,
     struct dhcp6_optinfo *, struct sockaddr *, int, struct dhcp6_optinfo *,
-    struct relayinfolist *, struct host_conf *));
-static int make_ia_stcode __P((int, u_int32_t, u_int16_t,
-    struct dhcp6_list *));
-static int update_ia __P((int, struct dhcp6_listval *,
-    struct dhcp6_list *, struct dhcp6_optinfo *));
-static int release_binding_ia __P((struct dhcp6_listval *, struct dhcp6_list *,
-    struct dhcp6_optinfo *));
-static int decline_binding_ia __P((struct dhcp6_listval *, struct dhcp6_list *,
-    struct dhcp6_optinfo *));
-static int make_ia __P((struct dhcp6_listval *, struct dhcp6_list *,
-    struct dhcp6_list *, struct host_conf *, int));
-static int make_match_ia __P((struct dhcp6_listval *, struct dhcp6_list *,
-    struct dhcp6_list *));
-static int make_iana_from_pool __P((struct dhcp6_poolspec *,
-    struct dhcp6_listval *, struct dhcp6_list *));
-static void calc_ia_timo __P((struct dhcp6_ia *, struct dhcp6_list *,
-    struct host_conf *));
-static void update_binding_duration __P((struct dhcp6_binding *));
-static struct dhcp6_binding *add_binding __P((struct duid *,
-    dhcp6_bindingtype_t, int, u_int32_t, void *));
-static struct dhcp6_binding *find_binding __P((struct duid *,
-    dhcp6_bindingtype_t, int, u_int32_t));
-static void update_binding __P((struct dhcp6_binding *));
-static void remove_binding __P((struct dhcp6_binding *));
-static void free_binding __P((struct dhcp6_binding *));
-static struct dhcp6_timer *binding_timo __P((void *));
-static struct dhcp6_listval *find_binding_ia __P((struct dhcp6_listval *,
-    struct dhcp6_binding *));
-static char *bindingstr __P((struct dhcp6_binding *));
-static int process_auth __P((struct dhcp6 *, ssize_t, struct host_conf *,
-    struct dhcp6_optinfo *, struct dhcp6_optinfo *));
-static inline char *clientstr __P((struct host_conf *, struct duid *));
+    struct relayinfolist *, struct host_conf *);
+static int make_ia_stcode(int, u_int32_t, u_int16_t,
+    struct dhcp6_list *);
+static int update_ia(int, struct dhcp6_listval *,
+    struct dhcp6_list *, struct dhcp6_optinfo *);
+static int release_binding_ia(struct dhcp6_listval *, struct dhcp6_list *,
+    struct dhcp6_optinfo *);
+static int decline_binding_ia(struct dhcp6_listval *, struct dhcp6_list *,
+    struct dhcp6_optinfo *);
+static int make_ia(struct dhcp6_listval *, struct dhcp6_list *,
+    struct dhcp6_list *, struct host_conf *, int);
+static int make_match_ia(struct dhcp6_listval *, struct dhcp6_list *,
+    struct dhcp6_list *);
+static int make_iana_from_pool(struct dhcp6_poolspec *,
+    struct dhcp6_listval *, struct dhcp6_list *);
+static void calc_ia_timo(struct dhcp6_ia *, struct dhcp6_list *,
+    struct host_conf *);
+static void update_binding_duration(struct dhcp6_binding *);
+static struct dhcp6_binding *add_binding(struct duid *,
+    dhcp6_bindingtype_t, int, u_int32_t, void *);
+static struct dhcp6_binding *find_binding(struct duid *,
+    dhcp6_bindingtype_t, int, u_int32_t);
+static void update_binding(struct dhcp6_binding *);
+static void remove_binding(struct dhcp6_binding *);
+static void free_binding(struct dhcp6_binding *);
+static struct dhcp6_timer *binding_timo(void *);
+static struct dhcp6_listval *find_binding_ia(struct dhcp6_listval *,
+    struct dhcp6_binding *);
+static char *bindingstr(struct dhcp6_binding *);
+static int process_auth(struct dhcp6 *, ssize_t, struct host_conf *,
+    struct dhcp6_optinfo *, struct dhcp6_optinfo *);
+static inline char *clientstr(struct host_conf *, struct duid *);
 
 int
 main(argc, argv)

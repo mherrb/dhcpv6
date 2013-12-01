@@ -79,21 +79,21 @@ struct statefuladdr {
 	struct dhcp6_if *dhcpif;
 };
 
-static struct statefuladdr *find_addr __P((struct statefuladdr_list *,
-    struct dhcp6_statefuladdr *));
-static int remove_addr __P((struct statefuladdr *));
-static int isvalid_addr __P((struct iactl *));
-static u_int32_t duration_addr __P((struct iactl *));
-static void cleanup_addr __P((struct iactl *));
-static int renew_addr __P((struct iactl *, struct dhcp6_ia *,
-    struct dhcp6_eventdata **, struct dhcp6_eventdata *));
-static void na_renew_data_free __P((struct dhcp6_eventdata *));
+static struct statefuladdr *find_addr(struct statefuladdr_list *,
+    struct dhcp6_statefuladdr *);
+static int remove_addr(struct statefuladdr *);
+static int isvalid_addr(struct iactl *);
+static u_int32_t duration_addr(struct iactl *);
+static void cleanup_addr(struct iactl *);
+static int renew_addr(struct iactl *, struct dhcp6_ia *,
+    struct dhcp6_eventdata **, struct dhcp6_eventdata *);
+static void na_renew_data_free(struct dhcp6_eventdata *);
 
-static struct dhcp6_timer *addr_timo __P((void *));
+static struct dhcp6_timer *addr_timo(void *);
 
-static int na_ifaddrconf __P((ifaddrconf_cmd_t, struct statefuladdr *));
+static int na_ifaddrconf(ifaddrconf_cmd_t, struct statefuladdr *);
 
-extern struct dhcp6_timer *client6_timo __P((void *));
+extern struct dhcp6_timer *client6_timo(void *);
 
 int
 update_address(ia, addr, dhcpifp, ctlp, callback)
@@ -101,7 +101,7 @@ update_address(ia, addr, dhcpifp, ctlp, callback)
 	struct dhcp6_statefuladdr *addr;
 	struct dhcp6_if *dhcpifp;
 	struct iactl **ctlp;
-	void (*callback)__P((struct ia *));
+	void (*callback)(struct ia *);
 {
 	struct iactl_na *iac_na = (struct iactl_na *)*ctlp;
 	struct statefuladdr *sa;
@@ -354,7 +354,7 @@ addr_timo(arg)
 {
 	struct statefuladdr *sa = (struct statefuladdr *)arg;
 	struct ia *ia;
-	void (*callback)__P((struct ia *));
+	void (*callback)(struct ia *);
 
 	debugprintf(LOG_DEBUG, FNAME, "address timeout for %s",
 	    in6addr2str(&sa->addr.addr, 0));

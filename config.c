@@ -114,26 +114,26 @@ extern struct cf_list *cf_bcmcs_list, *cf_bcmcs_name_list;
 extern long long cf_refreshtime;
 extern char *configfilename;
 
-static struct keyinfo *find_keybyname __P((struct keyinfo *, char *));
-static int add_pd_pif __P((struct iapd_conf *, struct cf_list *));
-static int add_options __P((int, struct dhcp6_ifconf *, struct cf_list *));
-static int add_prefix __P((struct dhcp6_list *, char *, int,
-    struct dhcp6_prefix *));
-static void clear_pd_pif __P((struct iapd_conf *));
-static void clear_ifconf __P((struct dhcp6_ifconf *));
-static void clear_iaconf __P((struct ia_conflist *));
-static void clear_hostconf __P((struct host_conf *));
-static void clear_keys __P((struct keyinfo *));
-static void clear_authinfo __P((struct authinfo *));
-static int configure_duid __P((char *, struct duid *));
-static int configure_addr __P((struct cf_list *, struct dhcp6_list *, char *));
-static int configure_domain __P((struct cf_list *, struct dhcp6_list *, char *));
-static int get_default_ifid __P((struct prefix_ifconf *));
-static void clear_poolconf __P((struct pool_conf *));
-static struct pool_conf *create_pool __P((char *, struct dhcp6_range *));
-struct host_conf *find_dynamic_hostconf __P((struct duid *));
-static int in6_addr_cmp __P((struct in6_addr *, struct in6_addr *));
-static void in6_addr_inc __P((struct in6_addr *));
+static struct keyinfo *find_keybyname(struct keyinfo *, char *);
+static int add_pd_pif(struct iapd_conf *, struct cf_list *);
+static int add_options(int, struct dhcp6_ifconf *, struct cf_list *);
+static int add_prefix(struct dhcp6_list *, char *, int,
+    struct dhcp6_prefix *);
+static void clear_pd_pif(struct iapd_conf *);
+static void clear_ifconf(struct dhcp6_ifconf *);
+static void clear_iaconf(struct ia_conflist *);
+static void clear_hostconf(struct host_conf *);
+static void clear_keys(struct keyinfo *);
+static void clear_authinfo(struct authinfo *);
+static int configure_duid(char *, struct duid *);
+static int configure_addr(struct cf_list *, struct dhcp6_list *, char *);
+static int configure_domain(struct cf_list *, struct dhcp6_list *, char *);
+static int get_default_ifid(struct prefix_ifconf *);
+static void clear_poolconf(struct pool_conf *);
+static struct pool_conf *create_pool(char *, struct dhcp6_range *);
+struct host_conf *find_dynamic_hostconf(struct duid *);
+static int in6_addr_cmp(struct in6_addr *, struct in6_addr *);
+static void in6_addr_inc(struct in6_addr *);
 
 int
 configure_interface(iflist)

@@ -72,15 +72,15 @@ struct hash_table {
 
 static struct hash_table dhcp6_lease_table;
 
-static unsigned int in6_addr_hash __P((void *));
-static int in6_addr_match __P((void *, void *));
+static unsigned int in6_addr_hash(void *);
+static int in6_addr_match(void *, void *);
 
-static int hash_table_init __P((struct hash_table *, unsigned int,
-				pfn_hash_t, pfh_hash_match_t));
-static void hash_table_cleanup __P((struct hash_table *));
-static int hash_table_add __P((struct hash_table *, void *, unsigned int));
-static int hash_table_remove __P((struct hash_table *, void *));
-static struct hash_entry * hash_table_find __P((struct hash_table *, void *));
+static int hash_table_init(struct hash_table *, unsigned int,
+				pfn_hash_t, pfh_hash_match_t);
+static void hash_table_cleanup(struct hash_table *);
+static int hash_table_add(struct hash_table *, void *, unsigned int);
+static int hash_table_remove(struct hash_table *, void *);
+static struct hash_entry * hash_table_find(struct hash_table *, void *);
 
 int
 lease_init(void)

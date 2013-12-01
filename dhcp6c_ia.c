@@ -77,18 +77,18 @@ struct ia {
 	struct authparam *authparam;
 };
 
-static int update_authparam __P((struct ia *, struct authparam *));
-static void reestablish_ia __P((struct ia *));
-static void callback __P((struct ia *));
-static int release_ia __P((struct ia *));
-static void remove_ia __P((struct ia *));
-static struct ia *get_ia __P((iatype_t, struct dhcp6_if *, struct ia_conf *,
-    struct dhcp6_listval *, struct duid *));
-static struct ia *find_ia __P((struct ia_conf *, iatype_t, u_int32_t));
-static struct dhcp6_timer *ia_timo __P((void *));
+static int update_authparam(struct ia *, struct authparam *);
+static void reestablish_ia(struct ia *);
+static void callback(struct ia *);
+static int release_ia(struct ia *);
+static void remove_ia(struct ia *);
+static struct ia *get_ia(iatype_t, struct dhcp6_if *, struct ia_conf *,
+    struct dhcp6_listval *, struct duid *);
+static struct ia *find_ia(struct ia_conf *, iatype_t, u_int32_t);
+static struct dhcp6_timer *ia_timo(void *);
 
-static char *iastr __P((iatype_t));
-static char *statestr __P((iastate_t));
+static char *iastr(iatype_t);
+static char *statestr(iastate_t);
 
 void
 update_ia(iatype, ialist, ifp, serverid, authparam)

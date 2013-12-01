@@ -94,45 +94,45 @@ static int ctldigestlen;
 
 static int infreq_mode = 0;
 
-static inline int get_val32 __P((char **, int *, u_int32_t *));
-static inline int get_ifname __P((char **, int *, char *, int));
+static inline int get_val32(char **, int *, u_int32_t *);
+static inline int get_ifname(char **, int *, char *, int);
 
-static void usage __P((void));
-static void client6_init __P((void));
-static void client6_startall __P((int));
-static void free_resources __P((struct dhcp6_if *));
-static void client6_mainloop __P((void));
-static int client6_do_ctlcommand __P((char *, ssize_t));
-static void client6_reload __P((void));
-static int client6_ifctl __P((char *ifname, u_int16_t));
-static void check_exit __P((void));
-static void process_signals __P((void));
-static struct dhcp6_serverinfo *find_server __P((struct dhcp6_event *,
-						 struct duid *));
-static struct dhcp6_serverinfo *select_server __P((struct dhcp6_event *));
-static void client6_recv __P((void));
-static int client6_recvadvert __P((struct dhcp6_if *, struct dhcp6 *,
-				   ssize_t, struct dhcp6_optinfo *));
-static int client6_recvreply __P((struct dhcp6_if *, struct dhcp6 *,
-				  ssize_t, struct dhcp6_optinfo *));
-static void client6_signal __P((int));
-static struct dhcp6_event *find_event_withid __P((struct dhcp6_if *,
-						  u_int32_t));
-static int construct_confdata __P((struct dhcp6_if *, struct dhcp6_event *));
-static int construct_reqdata __P((struct dhcp6_if *, struct dhcp6_optinfo *,
-    struct dhcp6_event *));
-static void destruct_iadata __P((struct dhcp6_eventdata *));
-static void tv_sub __P((struct timeval *, struct timeval *, struct timeval *));
-static struct dhcp6_timer *client6_expire_refreshtime __P((void *));
-static int process_auth __P((struct authparam *, struct dhcp6 *dh6, ssize_t,
-    struct dhcp6_optinfo *));
-static int set_auth __P((struct dhcp6_event *, struct dhcp6_optinfo *));
+static void usage(void);
+static void client6_init(void);
+static void client6_startall(int);
+static void free_resources(struct dhcp6_if *);
+static void client6_mainloop(void);
+static int client6_do_ctlcommand(char *, ssize_t);
+static void client6_reload(void);
+static int client6_ifctl(char *ifname, u_int16_t);
+static void check_exit(void);
+static void process_signals(void);
+static struct dhcp6_serverinfo *find_server(struct dhcp6_event *,
+					    struct duid *);
+static struct dhcp6_serverinfo *select_server(struct dhcp6_event *);
+static void client6_recv(void);
+static int client6_recvadvert(struct dhcp6_if *, struct dhcp6 *,
+			      ssize_t, struct dhcp6_optinfo *);
+static int client6_recvreply(struct dhcp6_if *, struct dhcp6 *,
+			     ssize_t, struct dhcp6_optinfo *);
+static void client6_signal(int);
+static struct dhcp6_event *find_event_withid(struct dhcp6_if *,
+					     u_int32_t);
+static int construct_confdata(struct dhcp6_if *, struct dhcp6_event *);
+static int construct_reqdata(struct dhcp6_if *, struct dhcp6_optinfo *,
+    struct dhcp6_event *);
+static void destruct_iadata(struct dhcp6_eventdata *);
+static void tv_sub(struct timeval *, struct timeval *, struct timeval *);
+static struct dhcp6_timer *client6_expire_refreshtime(void *);
+static int process_auth(struct authparam *, struct dhcp6 *dh6, ssize_t,
+    struct dhcp6_optinfo *);
+static int set_auth(struct dhcp6_event *, struct dhcp6_optinfo *);
 
-struct dhcp6_timer *client6_timo __P((void *));
-int client6_start __P((struct dhcp6_if *));
-static void info_printf __P((const char *, ...));
+struct dhcp6_timer *client6_timo(void *);
+int client6_start(struct dhcp6_if *);
+static void info_printf(const char *, ...);
 
-extern int client6_script __P((char *, int, struct dhcp6_optinfo *));
+extern int client6_script(char *, int, struct dhcp6_optinfo *);
 
 #define MAX_ELAPSED_TIME 0xffff
 

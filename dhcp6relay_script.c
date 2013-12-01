@@ -54,8 +54,8 @@
 static char client_str[] = "client";
 static char buf[BUFSIZ];
 
-static char *iapd2str __P((int, struct dhcp6_listval *));
-static char *iana2str __P((int, struct dhcp6_listval *));
+static char *iapd2str(int, struct dhcp6_listval *);
+static char *iana2str(int, struct dhcp6_listval *);
 
 int
 relay6_script(scriptpath, client, dh6, len)

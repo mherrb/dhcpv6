@@ -67,18 +67,18 @@
 int foreground;
 int debug_thresh;
 
-static int dhcp6_count_list __P((struct dhcp6_list *));
-static int in6_matchflags __P((struct sockaddr *, char *, int));
-static ssize_t dnsencode __P((const char *, char *, size_t));
-static char *dnsdecode __P((u_char **, u_char *, char *, size_t));
-static int copyout_option __P((char *, char *, struct dhcp6_listval *));
-static int copyin_option __P((int, struct dhcp6opt *, struct dhcp6opt *,
-    struct dhcp6_list *));
-static int copy_option __P((u_int16_t, u_int16_t, void *, struct dhcp6opt **,
-    struct dhcp6opt *, int *));
-static ssize_t gethwid __P((char *, int, const char *, u_int16_t *));
-static char *sprint_uint64 __P((char *, int, u_int64_t));
-static char *sprint_auth __P((struct dhcp6_optinfo *));
+static int dhcp6_count_list(struct dhcp6_list *);
+static int in6_matchflags(struct sockaddr *, char *, int);
+static ssize_t dnsencode(const char *, char *, size_t);
+static char *dnsdecode(u_char **, u_char *, char *, size_t);
+static int copyout_option(char *, char *, struct dhcp6_listval *);
+static int copyin_option(int, struct dhcp6opt *, struct dhcp6opt *,
+    struct dhcp6_list *);
+static int copy_option(u_int16_t, u_int16_t, void *, struct dhcp6opt **,
+    struct dhcp6opt *, int *);
+static ssize_t gethwid(char *, int, const char *, u_int16_t *);
+static char *sprint_uint64(char *, int, u_int64_t);
+static char *sprint_auth(struct dhcp6_optinfo *);
 
 int
 dhcp6_copy_list(dst, src)

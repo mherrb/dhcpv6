@@ -80,18 +80,18 @@ typedef struct {
 	unsigned char key[HMACMD5_KEYLENGTH];
 } hmacmd5_t;
 
-static void hmacmd5_init __P((hmacmd5_t *, const unsigned char *,
-    unsigned int));
-static void hmacmd5_invalidate __P((hmacmd5_t *));
-static void hmacmd5_update __P((hmacmd5_t *, const unsigned char *,
-    unsigned int));
-static void hmacmd5_sign __P((hmacmd5_t *, unsigned char *));
-static int hmacmd5_verify __P((hmacmd5_t *, unsigned char *));
+static void hmacmd5_init(hmacmd5_t *, const unsigned char *,
+    unsigned int);
+static void hmacmd5_invalidate(hmacmd5_t *);
+static void hmacmd5_update(hmacmd5_t *, const unsigned char *,
+    unsigned int);
+static void hmacmd5_sign(hmacmd5_t *, unsigned char *);
+static int hmacmd5_verify(hmacmd5_t *, unsigned char *);
 
-static void md5_init __P((md5_t *));
-static void md5_invalidate __P((md5_t *));
-static void md5_final __P((md5_t *, unsigned char *));
-static void md5_update __P((md5_t *, const unsigned char *, unsigned int));
+static void md5_init(md5_t *);
+static void md5_invalidate(md5_t *);
+static void md5_final(md5_t *, unsigned char *);
+static void md5_update(md5_t *, const unsigned char *, unsigned int);
 
 int
 dhcp6_validate_key(key)

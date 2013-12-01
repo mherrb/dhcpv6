@@ -93,23 +93,23 @@ struct dhcp6_ifprefix {
 	struct sockaddr_in6 ifaddr;
 };
 
-static struct siteprefix *find_siteprefix __P((struct siteprefix_list *,
-    struct dhcp6_prefix *, int));
-static void remove_siteprefix __P((struct siteprefix *));
-static int isvalid __P((struct iactl *));
-static u_int32_t duration __P((struct iactl *));
-static void cleanup __P((struct iactl *));
-static int renew_prefix __P((struct iactl *, struct dhcp6_ia *,
-    struct dhcp6_eventdata **, struct dhcp6_eventdata *));
-static void renew_data_free __P((struct dhcp6_eventdata *));
+static struct siteprefix *find_siteprefix(struct siteprefix_list *,
+    struct dhcp6_prefix *, int);
+static void remove_siteprefix(struct siteprefix *);
+static int isvalid(struct iactl *);
+static u_int32_t duration(struct iactl *);
+static void cleanup(struct iactl *);
+static int renew_prefix(struct iactl *, struct dhcp6_ia *,
+    struct dhcp6_eventdata **, struct dhcp6_eventdata *);
+static void renew_data_free(struct dhcp6_eventdata *);
 
-static struct dhcp6_timer *siteprefix_timo __P((void *));
+static struct dhcp6_timer *siteprefix_timo(void *);
 
-static int add_ifprefix __P((struct siteprefix *,
-    struct dhcp6_prefix *, struct prefix_ifconf *));
+static int add_ifprefix(struct siteprefix *,
+    struct dhcp6_prefix *, struct prefix_ifconf *);
 
-extern struct dhcp6_timer *client6_timo __P((void *));
-static int pd_ifaddrconf __P((ifaddrconf_cmd_t, struct dhcp6_ifprefix *ifpfx));
+extern struct dhcp6_timer *client6_timo(void *);
+static int pd_ifaddrconf(ifaddrconf_cmd_t, struct dhcp6_ifprefix *ifpfx);
 
 int
 update_prefix(ia, pinfo, pifc, dhcpifp, ctlp, callback)
@@ -118,7 +118,7 @@ update_prefix(ia, pinfo, pifc, dhcpifp, ctlp, callback)
 	struct pifc_list *pifc;
 	struct dhcp6_if *dhcpifp;
 	struct iactl **ctlp;
-	void (*callback)__P((struct ia *));
+	void (*callback)(struct ia *);
 {
 	struct iactl_pd *iac_pd = (struct iactl_pd *)*ctlp;
 	struct siteprefix *sp;
@@ -400,7 +400,7 @@ siteprefix_timo(arg)
 {
 	struct siteprefix *sp = (struct siteprefix *)arg;
 	struct ia *ia;
-	void (*callback)__P((struct ia *));
+	void (*callback)(struct ia *);
 
 	debugprintf(LOG_DEBUG, FNAME, "prefix timeout for %s/%d",
 	    in6addr2str(&sp->prefix.addr, 0), sp->prefix.plen);

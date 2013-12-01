@@ -99,21 +99,21 @@ static char *global_strings[] = {
 	NULL
 };
 
-static void usage __P((void));
-static struct prefix_list *make_prefix __P((char *));
-static void relay6_init __P((int, char *[]));
-static void relay6_loop __P((void));
-static void relay6_recv __P((int, int));
-static void process_signals __P((void));
-static void relay6_signal __P((int));
-static int make_msgcontrol __P((struct msghdr *, void *, socklen_t,
-    struct in6_pktinfo *, int));
-static void relay_to_server __P((struct dhcp6 *, ssize_t,
-    struct sockaddr_in6 *, char *, unsigned int));
-static void relay_to_client __P((struct dhcp6_relay *, ssize_t,
-    struct sockaddr *));
-extern int relay6_script __P((char *, struct sockaddr_in6 *,
-    struct dhcp6 *, int));
+static void usage(void);
+static struct prefix_list *make_prefix(char *);
+static void relay6_init(int, char *[]);
+static void relay6_loop(void);
+static void relay6_recv(int, int);
+static void process_signals(void);
+static void relay6_signal(int);
+static int make_msgcontrol(struct msghdr *, void *, socklen_t,
+    struct in6_pktinfo *, int);
+static void relay_to_server(struct dhcp6 *, ssize_t,
+    struct sockaddr_in6 *, char *, unsigned int);
+static void relay_to_client(struct dhcp6_relay *, ssize_t,
+    struct sockaddr *);
+extern int relay6_script(char *, struct sockaddr_in6 *,
+    struct dhcp6 *, int);
 
 
 static void

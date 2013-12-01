@@ -55,21 +55,21 @@ static char *ctlport;
 
 static enum { CTLCLIENT, CTLSERVER } ctltype = CTLCLIENT;
 
-static inline int put16 __P((char **, int *, u_int16_t));
-static inline int put32 __P((char **, int *, u_int32_t));
-static inline int putval __P((char **, int *, void *, size_t));
+static inline int put16(char **, int *, u_int16_t);
+static inline int put32(char **, int *, u_int32_t);
+static inline int putval(char **, int *, void *, size_t);
 
-static int setup_auth __P((char *, struct keyinfo *, int *));
-static int make_command __P((int, char **, char **, size_t *,
-    struct keyinfo *, int));
-static int make_remove_command __P((int, char **, char **, int *));
-static int make_start_command __P((int, char **, char **, int *));
-static int make_stop_command __P((int, char **, char **, int *));
-static int make_binding_object __P((int, char **, char **, int *));
-static int make_interface_object __P((int, char **, char **, int *));
-static int make_ia_object __P((int, char **, char **, int *));
-static int parse_duid __P((char *, int *, char **, int *));
-static void usage __P((void));
+static int setup_auth(char *, struct keyinfo *, int *);
+static int make_command(int, char **, char **, size_t *,
+    struct keyinfo *, int);
+static int make_remove_command(int, char **, char **, int *);
+static int make_start_command(int, char **, char **, int *);
+static int make_stop_command(int, char **, char **, int *);
+static int make_binding_object(int, char **, char **, int *);
+static int make_interface_object(int, char **, char **, int *);
+static int make_ia_object(int, char **, char **, int *);
+static int parse_duid(char *, int *, char **, int *);
+static void usage(void);
 
 int
 main(argc, argv)
