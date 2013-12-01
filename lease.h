@@ -30,11 +30,11 @@
 #ifndef __LEASE_H_DEFINED
 #define __LEASE_H_DEFINED
 
-extern int lease_init __P((void));
-extern void lease_cleanup __P((void));
-extern int lease_address __P((struct in6_addr *));
-extern void release_address __P((struct in6_addr *));
-extern void decline_address __P((struct in6_addr *));
-extern int is_leased __P((struct in6_addr *));
+extern int lease_init(void);
+extern void lease_cleanup(void);
+extern int lease_address(struct in6_addr *);
+extern void release_address(struct in6_addr *);
+extern void decline_address(struct in6_addr *);
+extern int is_leased(struct in6_addr *);
 
 #endif

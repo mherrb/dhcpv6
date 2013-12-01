@@ -29,4 +29,4 @@
  * SUCH DAMAGE.
  */
 
-extern int base64_decodestring __P((const char *, char *, size_t));
+extern int base64_decodestring(const char *, char *, size_t);

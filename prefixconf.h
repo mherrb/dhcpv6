@@ -32,10 +32,10 @@
 typedef enum { PREFIX6S_ACTIVE, PREFIX6S_RENEW,
 	       PREFIX6S_REBIND} prefix6state_t;
 
-extern int update_prefix __P((struct ia *, struct dhcp6_prefix *,
+extern int update_prefix(struct ia *, struct dhcp6_prefix *,
     struct pifc_list *, struct dhcp6_if *, struct iactl **,
-    void (*)__P((struct ia *))));
-extern int prefix6_add __P((struct dhcp6_if *, struct dhcp6_prefix *,
-			       struct duid *));
-extern int prefix6_update __P((struct dhcp6_event *, struct dhcp6_list *,
-				  struct duid *));
+    void (*)(struct ia *));
+extern int prefix6_add(struct dhcp6_if *, struct dhcp6_prefix *,
+			       struct duid *);
+extern int prefix6_update(struct dhcp6_event *, struct dhcp6_list *,
+				  struct duid *);

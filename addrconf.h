@@ -31,5 +31,5 @@
 
 typedef enum { ADDR6S_ACTIVE, ADDR6S_RENEW, ADDR6S_REBIND} addr6state_t;
 
-extern int update_address __P((struct ia *, struct dhcp6_statefuladdr *,
-    struct dhcp6_if *, struct iactl **, void (*)__P((struct ia *))));
+extern int update_address(struct ia *, struct dhcp6_statefuladdr *,
+    struct dhcp6_if *, struct iactl **, void (*)(struct ia *));

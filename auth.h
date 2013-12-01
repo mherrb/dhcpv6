@@ -46,8 +46,8 @@ struct keyinfo {
 	time_t expire;		/* expiration time (0 means forever) */
 };
 
-extern int dhcp6_validate_key __P((struct keyinfo *));
-extern int dhcp6_calc_mac __P((char *, size_t, int, int, size_t,
-    struct keyinfo *));
-extern int dhcp6_verify_mac __P((char *, ssize_t, int, int, size_t,
-    struct keyinfo *));
+extern int dhcp6_validate_key(struct keyinfo *);
+extern int dhcp6_calc_mac(char *, size_t, int, int, size_t,
+    struct keyinfo *);
+extern int dhcp6_verify_mac(char *, ssize_t, int, int, size_t,
+    struct keyinfo *);

@@ -142,7 +142,7 @@ struct dhcp6_eventdata {
 	dhcp6_eventdata_t type;
 	void *data;
 
-	void (*destructor) __P((struct dhcp6_eventdata *));
+	void (*destructor)(struct dhcp6_eventdata *);
 	void *privdata;
 };
 
@@ -301,31 +301,31 @@ extern struct dhcp6_list bcmcslist;
 extern struct dhcp6_list bcmcsnamelist;
 extern long long optrefreshtime;
 
-extern struct dhcp6_if *ifinit __P((char *));
-extern int ifreset __P((struct dhcp6_if *));
-extern int configure_interface __P((struct cf_namelist *));
-extern int configure_host __P((struct cf_namelist *));
-extern int configure_keys __P((struct cf_namelist *));
-extern int configure_authinfo __P((struct cf_namelist *));
-extern int configure_ia __P((struct cf_namelist *, iatype_t));
-extern int configure_global_option __P((void));
-extern void configure_cleanup __P((void));
-extern void configure_commit __P((void));
-extern int cfparse __P((char *));
-extern struct dhcp6_if *find_ifconfbyname __P((char *));
-extern struct dhcp6_if *find_ifconfbyid __P((unsigned int));
-extern struct prefix_ifconf *find_prefixifconf __P((char *));
-extern struct host_conf *find_hostconf __P((struct duid *));
-extern struct authinfo *find_authinfo __P((struct authinfo *, char *));
-extern struct dhcp6_prefix *find_prefix6 __P((struct dhcp6_list *,
-					      struct dhcp6_prefix *));
-extern struct ia_conf *find_iaconf __P((struct ia_conflist *, int, u_int32_t));
-extern struct keyinfo *find_key __P((char *, size_t, u_int32_t));
-extern int configure_pool __P((struct cf_namelist *));
-extern struct pool_conf *find_pool __P((const char *));
-extern int is_available_in_pool __P((struct pool_conf *, struct in6_addr *));
-extern int get_free_address_from_pool __P((struct pool_conf *,
-	struct in6_addr *));
-struct host_conf *create_dynamic_hostconf __P((struct duid *,
-	struct dhcp6_poolspec *));
-extern char *qstrdup __P((char *));
+extern struct dhcp6_if *ifinit(char *);
+extern int ifreset(struct dhcp6_if *);
+extern int configure_interface(struct cf_namelist *);
+extern int configure_host(struct cf_namelist *);
+extern int configure_keys(struct cf_namelist *);
+extern int configure_authinfo(struct cf_namelist *);
+extern int configure_ia(struct cf_namelist *, iatype_t);
+extern int configure_global_option(void);
+extern void configure_cleanup(void);
+extern void configure_commit(void);
+extern int cfparse(char *);
+extern struct dhcp6_if *find_ifconfbyname(char *);
+extern struct dhcp6_if *find_ifconfbyid(unsigned int);
+extern struct prefix_ifconf *find_prefixifconf(char *);
+extern struct host_conf *find_hostconf(struct duid *);
+extern struct authinfo *find_authinfo(struct authinfo *, char *);
+extern struct dhcp6_prefix *find_prefix6(struct dhcp6_list *,
+					      struct dhcp6_prefix *);
+extern struct ia_conf *find_iaconf(struct ia_conflist *, int, u_int32_t);
+extern struct keyinfo *find_key(char *, size_t, u_int32_t);
+extern int configure_pool(struct cf_namelist *);
+extern struct pool_conf *find_pool(const char *);
+extern int is_available_in_pool(struct pool_conf *, struct in6_addr *);
+extern int get_free_address_from_pool(struct pool_conf *,
+	struct in6_addr *);
+struct host_conf *create_dynamic_hostconf(struct duid *,
+	struct dhcp6_poolspec *);
+extern char *qstrdup(char *);
