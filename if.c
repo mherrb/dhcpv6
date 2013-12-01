@@ -34,9 +34,7 @@
 
 #include <net/if.h>
 #include <netinet/in.h>
-#ifdef __KAME__
 #include <net/if_dl.h>
-#endif
 
 #include <syslog.h>
 #include <stdlib.h>

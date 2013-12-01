@@ -37,15 +37,10 @@
 #include <sys/time.h>
 #include <time.h>
 #include <net/if.h>
-#ifdef __FreeBSD__
-#include <net/if_var.h>
-#endif
 
 #include <netinet/in.h>
-#ifdef __KAME__
 #include <net/if_dl.h>
 #include <netinet6/in6_var.h>
-#endif
 
 #include <arpa/inet.h>
 #include <netdb.h>

@@ -28,12 +28,8 @@
  * SUCH DAMAGE.
  */
 
-#ifdef __KAME__
 #define IN6_IFF_INVALID (IN6_IFF_ANYCAST|IN6_IFF_TENTATIVE|\
 		IN6_IFF_DUPLICATED|IN6_IFF_DETACHED)
-#else
-#define IN6_IFF_INVALID (0)
-#endif
 
 #ifdef HAVE_ANSI_FUNC
 #define FNAME __func__

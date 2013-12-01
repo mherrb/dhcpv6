@@ -37,28 +37,11 @@
 #include <time.h>
 #include <net/if.h>
 #include <netinet/in.h>
-#ifdef __KAME__
 #include <net/if_types.h>
-#ifdef __FreeBSD__
-#include <net/if_var.h>
-#endif
 #include <net/if_dl.h>
-#endif
-#ifdef __linux__
-#include <linux/if_packet.h>
-#endif
 #include <net/if_arp.h>
-#ifdef __sun__
-#include <sys/sockio.h>
-#include <sys/dlpi.h>
-#include <stropts.h>
-#include <fcntl.h>
-#include <libdevinfo.h>
-#endif
 
-#ifdef __KAME__
 #include <netinet6/in6_var.h>
-#endif
 
 #include <ctype.h>
 #include <errno.h>
@@ -78,15 +61,6 @@
 #include <common.h>
 #include <timer.h>
 
-#ifdef __linux__
-/* from /usr/include/linux/ipv6.h */
-
-struct in6_ifreq {
-	struct in6_addr ifr6_addr;
-	u_int32_t ifr6_prefixlen;
-	unsigned int ifr6_ifindex;
-};
-#endif
 
 #define MAXDNAME 255
 
@@ -708,12 +682,10 @@ getifaddr(addr, ifnam, prefix, plen, strong, ignoreflags)
 			continue;
 
 		memcpy(&sin6, ifa->ifa_addr, sysdep_sa_len(ifa->ifa_addr));
-#ifdef __KAME__
 		if (IN6_IS_ADDR_LINKLOCAL(&sin6.sin6_addr)) {
 			sin6.sin6_addr.s6_addr[2] = 0;
 			sin6.sin6_addr.s6_addr[3] = 0;
 		}
-#endif
 		if (plen % 8 == 0) {
 			if (memcmp(&sin6.sin6_addr, prefix, plen / 8) != 0)
 				continue;
@@ -734,10 +706,8 @@ getifaddr(addr, ifnam, prefix, plen, strong, ignoreflags)
 				continue;
 		}
 		memcpy(addr, &sin6.sin6_addr, sizeof(sin6.sin6_addr));
-#ifdef __KAME__
 		if (IN6_IS_ADDR_LINKLOCAL(addr))
 			addr->s6_addr[2] = addr->s6_addr[3] = 0; 
-#endif
 		error = 0;
 		break;
 	}
@@ -953,7 +923,6 @@ in6_matchflags(addr, ifnam, flags)
 	char *ifnam;
 	int flags;
 {
-#ifdef __KAME__
 	int s;
 	struct in6_ifreq ifr6;
 
@@ -975,9 +944,6 @@ in6_matchflags(addr, ifnam, flags)
 	close(s);
 
 	return (ifr6.ifr_ifru.ifru_flags6 & flags);
-#else
-	return (0);
-#endif
 }
 
 int
@@ -1077,136 +1043,6 @@ get_duid(idfile, duid)
 	return (-1);
 }
 
-#ifdef __sun__
-struct hwparms {
-	char *buf;
-	u_int16_t *hwtypep;
-	ssize_t retval;
-};
-
-static ssize_t
-getifhwaddr(const char *ifname, char *buf, u_int16_t *hwtypep, int ppa)
-{
-	int fd, flags;
-	char fname[MAXPATHLEN], *cp;
-	struct strbuf putctl;
-	struct strbuf getctl;
-	long getbuf[1024];
-	dl_info_req_t dlir;
-	dl_phys_addr_req_t dlpar;
-	dl_phys_addr_ack_t *dlpaa;
-
-	debugprintf(LOG_DEBUG, FNAME, "trying %s ppa %d", ifname, ppa);
-
-	if (ifname[0] == '\0')
-		return (-1);
-	if (ppa >= 0 && !isdigit(ifname[strlen(ifname) - 1]))
-		(void) snprintf(fname, sizeof (fname), "/dev/%s%d", ifname,
-		    ppa);
-	else
-		(void) snprintf(fname, sizeof (fname), "/dev/%s", ifname);
-	getctl.maxlen = sizeof (getbuf);
-	getctl.buf = (char *)getbuf;
-	if ((fd = open(fname, O_RDWR)) == -1) {
-		dl_attach_req_t dlar;
-
-		cp = fname + strlen(fname) - 1;
-		if (!isdigit(*cp))
-			return (-1);
-		while (cp > fname) {
-			if (!isdigit(*cp))
-				break;
-			cp--;
-		}
-		if (cp == fname)
-			return (-1);
-		cp++;
-		dlar.dl_ppa = atoi(cp);
-		*cp = '\0';
-		if ((fd = open(fname, O_RDWR)) == -1)
-			return (-1);
-		dlar.dl_primitive = DL_ATTACH_REQ;
-		putctl.len = sizeof (dlar);
-		putctl.buf = (char *)&dlar;
-		if (putmsg(fd, &putctl, NULL, 0) == -1) {
-			(void) close(fd);
-			return (-1);
-		}
-		flags = 0;
-		if (getmsg(fd, &getctl, NULL, &flags) == -1) {
-			(void) close(fd);
-			return (-1);
-		}
-		if (getbuf[0] != DL_OK_ACK) {
-			(void) close(fd);
-			return (-1);
-		}
-	}
-	dlir.dl_primitive = DL_INFO_REQ;
-	putctl.len = sizeof (dlir);
-	putctl.buf = (char *)&dlir;
-	if (putmsg(fd, &putctl, NULL, 0) == -1) {
-		(void) close(fd);
-		return (-1);
-	}
-	flags = 0;
-	if (getmsg(fd, &getctl, NULL, &flags) == -1) {
-		(void) close(fd);
-		return (-1);
-	}
-	if (getbuf[0] != DL_INFO_ACK) {
-		(void) close(fd);
-		return (-1);
-	}
-	switch (((dl_info_ack_t *)getbuf)->dl_mac_type) {
-	case DL_CSMACD:
-	case DL_ETHER:
-	case DL_100VG:
-	case DL_ETH_CSMA:
-	case DL_100BT:
-		*hwtypep = ARPHRD_ETHER;
-		break;
-	default:
-		(void) close(fd);
-		return (-1);
-	}
-	dlpar.dl_primitive = DL_PHYS_ADDR_REQ;
-	dlpar.dl_addr_type = DL_CURR_PHYS_ADDR;
-	putctl.len = sizeof (dlpar);
-	putctl.buf = (char *)&dlpar;
-	if (putmsg(fd, &putctl, NULL, 0) == -1) {
-		(void) close(fd);
-		return (-1);
-	}
-	flags = 0;
-	if (getmsg(fd, &getctl, NULL, &flags) == -1) {
-		(void) close(fd);
-		return (-1);
-	}
-	if (getbuf[0] != DL_PHYS_ADDR_ACK) {
-		(void) close(fd);
-		return (-1);
-	}
-	dlpaa = (dl_phys_addr_ack_t *)getbuf;
-	if (dlpaa->dl_addr_length != 6) {
-		(void) close(fd);
-		return (-1);
-	}
-	(void) memcpy(buf, (char *)getbuf + dlpaa->dl_addr_offset,
-	    dlpaa->dl_addr_length);
-	return (dlpaa->dl_addr_length);
-}
-
-static int
-devfs_handler(di_node_t node, di_minor_t minor, void *arg)
-{
-	struct hwparms *parms = arg;
-
-	parms->retval = getifhwaddr(di_minor_name(minor), parms->buf,
-	    parms->hwtypep, di_instance(node));
-	return (parms->retval == -1 ? DI_WALK_CONTINUE : DI_WALK_TERMINATE);
-}
-#endif
 
 static ssize_t
 gethwid(buf, len, ifname, hwtypep)
@@ -1216,35 +1052,8 @@ gethwid(buf, len, ifname, hwtypep)
 	u_int16_t *hwtypep;
 {
 	struct ifaddrs *ifa, *ifap;
-#ifdef __KAME__
 	struct sockaddr_dl *sdl;
-#endif
-#ifdef __linux__
-	struct sockaddr_ll *sll;
-#endif
 	ssize_t l;
-
-#ifdef __sun__
-	if (ifname == NULL) {
-		di_node_t root;
-		struct hwparms parms;
-
-		if ((root = di_init("/", DINFOSUBTREE | DINFOMINOR |
-		    DINFOPROP)) == DI_NODE_NIL) {
-			debugprintf(LOG_INFO, FNAME, "di_init failed");
-			return (-1);
-		}
-		parms.buf = buf;
-		parms.hwtypep = hwtypep;
-		parms.retval = -1;
-		(void) di_walk_minor(root, DDI_NT_NET, DI_CHECK_ALIAS, &parms,
-		    devfs_handler);
-		di_fini(root);
-		return (parms.retval);
-	} else {
-		return (getifhwaddr(ifname, buf, hwtypep, -1));
-	}
-#endif
 
 	if (getifaddrs(&ifap) < 0)
 		return (-1);
@@ -1254,7 +1063,6 @@ gethwid(buf, len, ifname, hwtypep)
 			continue;
 		if (ifa->ifa_addr == NULL)
 			continue;
-#ifdef __KAME__
 		if (ifa->ifa_addr->sa_family != AF_LINK)
 			continue;
 
@@ -1279,20 +1087,6 @@ gethwid(buf, len, ifname, hwtypep)
 		    ifa->ifa_name);
 		memcpy(buf, LLADDR(sdl), sdl->sdl_alen);
 		l = sdl->sdl_alen; /* sdl will soon be freed */
-#endif
-#ifdef __linux__
-		if (ifa->ifa_addr->sa_family != AF_PACKET)
-			continue;
-
-		sll = (struct sockaddr_ll *)ifa->ifa_addr;
-		if (sll->sll_hatype != ARPHRD_ETHER)
-			continue;
-		*hwtypep = ARPHRD_ETHER;
-		debugprintf(LOG_DEBUG, FNAME, "found an interface %s for DUID",
-		    ifa->ifa_name);
-		memcpy(buf, sll->sll_addr, sll->sll_halen);
-		l = sll->sll_halen; /* sll will soon be freed */
-#endif
 		freeifaddrs(ifap);
 		return (l);
 	}
@@ -3241,16 +3035,7 @@ ifaddrconf(cmd, ifname, addr, plen, pltime, vltime)
 	int pltime;
 	int vltime;
 {
-#ifdef __KAME__
 	struct in6_aliasreq req;
-#endif
-#ifdef __linux__
-	struct in6_ifreq req;
-	struct ifreq ifr;
-#endif
-#ifdef __sun__
-	struct lifreq req;
-#endif
 	unsigned long ioctl_cmd;
 	char *cmdstr;
 	int s;			/* XXX overhead */
@@ -3258,27 +3043,11 @@ ifaddrconf(cmd, ifname, addr, plen, pltime, vltime)
 	switch(cmd) {
 	case IFADDRCONF_ADD:
 		cmdstr = "add";
-#ifdef __KAME__
 		ioctl_cmd = SIOCAIFADDR_IN6;
-#endif
-#ifdef __linux__
-		ioctl_cmd = SIOCSIFADDR;
-#endif
-#ifdef __sun__
-		ioctl_cmd = SIOCLIFADDIF;
-#endif
 		break;
 	case IFADDRCONF_REMOVE:
 		cmdstr = "remove";
-#ifdef __KAME__
 		ioctl_cmd = SIOCDIFADDR_IN6;
-#endif
-#ifdef __linux__
-		ioctl_cmd = SIOCDIFADDR;
-#endif
-#ifdef __sun__
-		ioctl_cmd = SIOCLIFREMOVEIF;
-#endif
 		break;
 	default:
 		return (-1);
@@ -3291,30 +3060,12 @@ ifaddrconf(cmd, ifname, addr, plen, pltime, vltime)
 	}
 
 	memset(&req, 0, sizeof(req));
-#ifdef __KAME__
 	req.ifra_addr = *addr;
 	memcpy(req.ifra_name, ifname, sizeof(req.ifra_name));
 	(void)sa6_plen2mask(&req.ifra_prefixmask, plen);
 	/* XXX: should lifetimes be calculated based on the lease duration? */
 	req.ifra_lifetime.ia6t_vltime = vltime;
 	req.ifra_lifetime.ia6t_pltime = pltime;
-#endif
-#ifdef __linux__
-	memset(&ifr, 0, sizeof(ifr));
-	strncpy(ifr.ifr_name, ifname, IFNAMSIZ - 1);
-	if (ioctl(s, SIOGIFINDEX, &ifr) < 0) {
-		debugprintf(LOG_NOTICE, FNAME, "failed to get the index of %s: %s",
-		    ifname, strerror(errno));
-		close(s); 
-		return (-1); 
-	}
-	memcpy(&req.ifr6_addr, &addr->sin6_addr, sizeof(struct in6_addr));
-	req.ifr6_prefixlen = plen;
-	req.ifr6_ifindex = ifr.ifr_ifindex;
-#endif
-#ifdef __sun__
-	strncpy(req.lifr_name, ifname, sizeof (req.lifr_name));
-#endif
 
 	if (ioctl(s, ioctl_cmd, &req)) {
 		debugprintf(LOG_NOTICE, FNAME, "failed to %s an address on %s: %s",
@@ -3322,16 +3073,6 @@ ifaddrconf(cmd, ifname, addr, plen, pltime, vltime)
 		close(s);
 		return (-1);
 	}
-
-#ifdef __sun__
-	memcpy(&req.lifr_addr, addr, sizeof (*addr));
-	if (ioctl(s, SIOCSLIFADDR, &req) == -1) {
-		debugprintf(LOG_NOTICE, FNAME, "failed to %s new address on %s: %s",
-		    cmdstr, ifname, strerror(errno));
-		close(s);
-		return (-1);
-	}
-#endif
 
 	debugprintf(LOG_DEBUG, FNAME, "%s an address %s/%d on %s", cmdstr,
 	    addr2str((struct sockaddr *)addr), plen, ifname);

@@ -35,16 +35,9 @@
 #include <sys/ioctl.h>
 
 #include <net/if.h>
-#ifdef __FreeBSD__
-#include <net/if_var.h>
-#endif
-
 #include <netinet/in.h>
-
-#ifdef __KAME__
 #include <netinet6/in6_var.h>
 #include <netinet6/nd6.h>
-#endif
 
 #include <errno.h>
 #include <syslog.h>

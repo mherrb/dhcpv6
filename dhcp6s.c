@@ -38,14 +38,9 @@
 #include <errno.h>
 
 #include <net/if.h>
-#ifdef __FreeBSD__
-#include <net/if_var.h>
-#endif
 
 #include <netinet/in.h>
-#ifdef __KAME__
 #include <netinet6/in6_var.h>
-#endif
 
 #include <arpa/inet.h>
 #include <stdio.h>
@@ -518,14 +513,12 @@ server6_init()
 		    strerror(errno));
 		exit(1);
 	}
-#if !defined(__linux__) && !defined(__sun__)
 	/* make the socket write-only */
 	if (shutdown(outsock, 0)) {
 		debugprintf(LOG_ERR, FNAME, "shutdown(outbound, 0): %s",
 		    strerror(errno));
 		exit(1);
 	}
-#endif
 	freeaddrinfo(res);
 
 	memset(&hints, 0, sizeof(hints));
