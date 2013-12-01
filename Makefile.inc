@@ -2,7 +2,7 @@
 
 CFLAGS+=	-I${.CURDIR}/..
 
-CFLAGS+=	-DSYSCONFDIR=\"/etc/\" \
+CFLAGS+=	-DSYSCONFDIR=\"/etc\" \
 		-DLOCALDBDIR=\"/var/db\" \
 		-DYYTEXT_POINTER=1 \
 		-DHAVE_STRUCT_TM_TM_ZONE=1 \
