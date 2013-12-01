@@ -49,7 +49,7 @@
 
 #define YY_NO_UNPUT 1
 
-char *configfilename;
+const char *configfilename;
 int lineno = 1;
 
 
@@ -57,7 +57,7 @@ int lineno = 1;
 #define MAX_INCLUDE_DEPTH 10
 
 static struct include_stack {
-	char *path;
+	const char *path;
 	YY_BUFFER_STATE state;
 	int lineno;
 } incstack[MAX_INCLUDE_DEPTH];
@@ -78,7 +78,7 @@ int cfdebug = 0;
 extern int yyparse(void);
 extern int cf_post_config(void);
 
-static void cfdebug_print(char *, char *, int);
+static void cfdebug_print(const char *, const char *, int);
 
 #define DP(str) if (cfdebug) cfdebug_print(str, yytext, yyleng)
 #define DECHO if (cfdebug) cfdebug_print(NULL, yytext, yyleng);
@@ -322,7 +322,7 @@ ecl		\}
 			yyterminate();
 		else {
 			yy_delete_buffer(YY_CURRENT_BUFFER);
-			free(incstack[incstackp + 1].path);
+			/* free(incstack[incstackp + 1].path); XXXX */
 			configfilename = incstack[incstackp].path;
 			lineno = incstack[incstackp].lineno;
 			yy_switch_to_buffer(incstack[incstackp].state);
@@ -331,7 +331,7 @@ ecl		\}
 
 %%
 static void
-cfdebug_print(char *w, char *t, int l)
+cfdebug_print(const char *w, const char *t, int l)
 {
 	if (w) {
 		debugprintf(LOG_DEBUG, FNAME,
@@ -342,8 +342,11 @@ cfdebug_print(char *w, char *t, int l)
 	}
 }
 
-static void
-yyerror0(int level, char *s, va_list ap)
+static void  yyerror0(int level, const char *s, va_list ap)
+    __attribute__((__format__ (printf, 2, 0)));
+
+static void 
+yyerror0(int level, const char *s, va_list ap)
 {
 	char ebuf[BUFSIZ], *bp, *ep;
 
@@ -356,8 +359,10 @@ yyerror0(int level, char *s, va_list ap)
 	debugprintf(level, FNAME, ebuf);
 }
 
+void yyerror(const char *s, ...) __attribute__((__format__ (printf, 1, 2)));
+
 void
-yyerror(char *s, ...)
+yyerror(const char *s, ...)
 {
 	va_list ap;
 	va_start(ap, s);
@@ -366,8 +371,10 @@ yyerror(char *s, ...)
 	yyerrorcount++;
 }
 
+void yywarn(const char *s, ...) __attribute__((__format__ (printf, 1, 2)));
+
 void
-yywarn(char *s, ...)
+yywarn(const char *s, ...)
 {
 	va_list ap;
 	va_start(ap, s);
@@ -408,7 +415,7 @@ cfswitch_buffer(char *incl)
 }
 
 int
-cfparse(char *conf)
+cfparse(const char *conf)
 {
 	configfilename = conf;
 	if ((yyin = fopen(configfilename, "r")) == NULL) {

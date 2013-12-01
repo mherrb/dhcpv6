@@ -70,7 +70,7 @@ struct dhcp6_commandctx {
 };
 
 int
-dhcp6_ctl_init(char *addr, char *port, int max, int *sockp)
+dhcp6_ctl_init(const char *addr, const char *port, int max, int *sockp)
 {
 	struct addrinfo hints, *res = NULL;
 	int on;
@@ -135,7 +135,8 @@ dhcp6_ctl_init(char *addr, char *port, int max, int *sockp)
 }
 
 int
-dhcp6_ctl_authinit(char *keyfile, struct keyinfo **keyinfop, int *digestlenp)
+dhcp6_ctl_authinit(const char *keyfile, struct keyinfo **keyinfop,
+    int *digestlenp)
 {
 	FILE *fp = NULL;
 	struct keyinfo *ctlkey = NULL;
@@ -314,7 +315,7 @@ dhcp6_ctl_readcommand(fd_set *read_fds)
 				}
 			} else if (ctx->input_len > sizeof(ctx->inputbuf)) {
 				debugprintf(LOG_INFO, FNAME,
-				    "too large command (%d bytes)",
+				    "too large command (%ld bytes)",
 				    ctx->input_len);
 				goto closecommand;
 			}

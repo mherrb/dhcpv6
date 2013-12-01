@@ -120,28 +120,28 @@ int ifidx;
 int insock;			/* inbound UDP port */
 int outsock;			/* outbound UDP port */
 int ctlsock = -1;		/* control TCP port */
-char *ctladdr = DEFAULT_SERVER_CONTROL_ADDR;
-char *ctlport = DEFAULT_SERVER_CONTROL_PORT;
+const char *ctladdr = DEFAULT_SERVER_CONTROL_ADDR;
+const char *ctlport = DEFAULT_SERVER_CONTROL_PORT;
 
 static const struct sockaddr_in6 *sa6_any_downstream, *sa6_any_relay;
 static struct msghdr rmh;
 static char rdatabuf[BUFSIZ];
 static int rmsgctllen;
-static char *conffile = DHCP6S_CONF;
+static const char *conffile = DHCP6S_CONF;
 static char *rmsgctlbuf;
 static struct duid server_duid;
 static struct dhcp6_list arg_dnslist;
-static char *ctlkeyfile = DEFAULT_KEYFILE;
+static const char *ctlkeyfile = DEFAULT_KEYFILE;
 static struct keyinfo *ctlkey = NULL;
 static int ctldigestlen;
-static char *pid_file = DHCP6S_PIDFILE;
+static const char *pid_file = DHCP6S_PIDFILE;
 
 static inline int get_val32(char **, int *, u_int32_t *);
 static inline int get_val(char **, int *, void *, size_t);
 
-static void usage(void);
+static void usage(void) __attribute__((__noreturn__));
 static void server6_init(void);
-static void server6_mainloop(void);
+static void server6_mainloop(void) __attribute__((__noreturn__));
 static int server6_do_ctlcommand(char *, ssize_t);
 static void server6_reload(void);
 static void server6_stop(void);
@@ -203,7 +203,7 @@ static void free_binding(struct dhcp6_binding *);
 static struct dhcp6_timer *binding_timo(void *);
 static struct dhcp6_listval *find_binding_ia(struct dhcp6_listval *,
     struct dhcp6_binding *);
-static char *bindingstr(struct dhcp6_binding *);
+static const char *bindingstr(struct dhcp6_binding *);
 static int process_auth(struct dhcp6 *, ssize_t, struct host_conf *,
     struct dhcp6_optinfo *, struct dhcp6_optinfo *);
 static inline char *clientstr(struct host_conf *, struct duid *);
@@ -885,7 +885,7 @@ server6_recv(int s)
 	dh6 = (struct dhcp6 *)rdatabuf;
 
 	if (len < sizeof(*dh6)) {
-		debugprintf(LOG_INFO, FNAME, "short packet (%d bytes)", len);
+		debugprintf(LOG_INFO, FNAME, "short packet (%ld bytes)", len);
 		return;
 	}
 
@@ -1897,7 +1897,7 @@ react_release(struct dhcp6_if *ifp, struct in6_pktinfo *pi,
 	 */
 	if (!IN6_IS_ADDR_MULTICAST(&pi->ipi6_addr) &&
 	    TAILQ_EMPTY(relayinfohead)) {
-		u_int16_t stcode = DH6OPT_STCODE_USEMULTICAST;
+		stcode = DH6OPT_STCODE_USEMULTICAST;
 
 		debugprintf(LOG_INFO, FNAME, "unexpected unicast message from %s",
 		    addr2str(from));
@@ -3328,11 +3328,11 @@ find_binding_ia(struct dhcp6_listval *key, struct dhcp6_binding *binding)
 	}
 }
 
-static char *
+static const char *
 bindingstr(struct dhcp6_binding *binding)
 {
 	static char strbuf[LINE_MAX];	/* XXX: thread unsafe */
-	char *iatype = NULL;
+	const char *iatype = NULL;
 
 	switch (binding->type) {
 	case DHCP6_BINDING_IA:

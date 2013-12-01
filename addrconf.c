@@ -114,7 +114,7 @@ update_address(struct ia *ia, struct dhcp6_statefuladdr *addr,
 	    (addr->pltime == DHCP6_DURATION_INFINITE ||
 	    addr->pltime > addr->vltime)) {
 		debugprintf(LOG_INFO, FNAME, "invalid address %s: "
-		    "pltime (%lu) is larger than vltime (%lu)",
+		    "pltime (%u) is larger than vltime (%u)",
 		    in6addr2str(&addr->addr, 0),
 		    addr->pltime, addr->vltime);
 		return (-1);
@@ -160,7 +160,7 @@ update_address(struct ia *ia, struct dhcp6_statefuladdr *addr,
 	sa->addr.pltime = addr->pltime;
 	sa->addr.vltime = addr->vltime;
 	sa->dhcpif = dhcpifp;
-	debugprintf(LOG_DEBUG, FNAME, "%s an address %s pltime=%lu, vltime=%lu",
+	debugprintf(LOG_DEBUG, FNAME, "%s an address %s pltime=%u, vltime=%u",
 	    sacreate ? "create" : "update",
 	    in6addr2str(&addr->addr, 0), addr->pltime, addr->vltime);
 

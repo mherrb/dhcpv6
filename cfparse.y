@@ -48,9 +48,9 @@
 extern int lineno;
 extern int cfdebug;
 
-extern void yywarn(char *, ...)
+extern void yywarn(const char *, ...)
 	__attribute__((__format__(__printf__, 1, 2)));
-extern void yyerror(char *, ...)
+extern void yyerror(const char *, ...)
 	__attribute__((__format__(__printf__, 1, 2)));
 
 #define MAKE_NAMELIST(l, n, p) do { \

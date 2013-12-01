@@ -56,7 +56,7 @@
 #include <common.h>
 
 #define DHCP6RELAY_PIDFILE "/var/run/dhcp6relay.pid"
-static char *pid_file = DHCP6RELAY_PIDFILE;
+static const char *pid_file = DHCP6RELAY_PIDFILE;
 
 static int ssock;		/* socket for relaying to servers */
 static int csock;		/* socket for clients */
@@ -68,7 +68,7 @@ static sig_atomic_t sig_flags = 0;
 
 static char *relaydevice;
 static char *boundaddr;
-static char *serveraddr = DH6ADDR_ALLSERVER;
+static const char *serveraddr = DH6ADDR_ALLSERVER;
 static char *scriptpath;
 
 static char *rmsgctlbuf;
@@ -92,15 +92,15 @@ struct prefix_list {
 	int plen;
 };
 TAILQ_HEAD(, prefix_list) global_prefixes; /* list of non-link-local prefixes */
-static char *global_strings[] = {
+static const char *global_strings[] = {
 	/* "fec0::/10",	site-local unicast addresses were deprecated */
 	"2000::/3",
 	"FC00::/7",  /* Unique Local Address (RFC4193) */
 	NULL
 };
 
-static void usage(void);
-static struct prefix_list *make_prefix(char *);
+static void usage(void) __attribute__((__noreturn__));
+static struct prefix_list *make_prefix(const char *);
 static void relay6_init(int, char *[]);
 static void relay6_loop(void);
 static void relay6_recv(int, int);
@@ -221,7 +221,7 @@ main(int argc, char *argv[])
 }
 
 static struct prefix_list *
-make_prefix(char *pstr0)
+make_prefix(const char *pstr0)
 {
 	struct prefix_list *pent;
 	char *p, *ep;
@@ -592,7 +592,7 @@ relay6_recv(int s, int fromclient)
 		return;
 	}
 
-	debugprintf(LOG_DEBUG, FNAME, "from %s, size %d",
+	debugprintf(LOG_DEBUG, FNAME, "from %s, size %ld",
 	    addr2str((struct sockaddr *)&from), len);
 
 	if (((struct sockaddr *)&from)->sa_family != AF_INET6) {
@@ -640,7 +640,7 @@ relay6_recv(int s, int fromclient)
 
 	/* packet validation */
 	if (len < sizeof (*dh6)) {
-		debugprintf(LOG_INFO, FNAME, "short packet (%d bytes)", len);
+		debugprintf(LOG_INFO, FNAME, "short packet (%ld bytes)", len);
 		return;
 	}
 

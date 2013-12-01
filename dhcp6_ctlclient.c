@@ -50,8 +50,8 @@
 #define DEFAULT_SERVER_KEYFILE SYSCONFDIR "/dhcp6sctlkey"
 #define DEFAULT_CLIENT_KEYFILE SYSCONFDIR "/dhcp6cctlkey"
 
-static char *ctladdr;
-static char *ctlport;
+static const char *ctladdr;
+static const char *ctlport;
 
 static enum { CTLCLIENT, CTLSERVER } ctltype = CTLCLIENT;
 
@@ -59,7 +59,7 @@ static inline int put16(char **, int *, u_int16_t);
 static inline int put32(char **, int *, u_int32_t);
 static inline int putval(char **, int *, void *, size_t);
 
-static int setup_auth(char *, struct keyinfo *, int *);
+static int setup_auth(const char *, struct keyinfo *, int *);
 static int make_command(int, char **, char **, size_t *,
     struct keyinfo *, int);
 static int make_remove_command(int, char **, char **, int *);
@@ -69,7 +69,7 @@ static int make_binding_object(int, char **, char **, int *);
 static int make_interface_object(int, char **, char **, int *);
 static int make_ia_object(int, char **, char **, int *);
 static int parse_duid(char *, int *, char **, int *);
-static void usage(void);
+static void usage(void) __attribute__((__noreturn__));
 
 int
 main(int argc, char *argv[])
@@ -80,7 +80,7 @@ main(int argc, char *argv[])
 	size_t clen = 0;
 	struct addrinfo hints, *res0, *res;
 	int digestlen;
-	char *keyfile = NULL;
+	const char *keyfile = NULL;
 	struct keyinfo key;
 
 	while ((ch = getopt(argc, argv, "CSa:k:p:")) != -1) {
@@ -192,7 +192,7 @@ main(int argc, char *argv[])
 }
 
 static int
-setup_auth(char *keyfile, struct keyinfo *key, int *digestlenp)
+setup_auth(const char *keyfile, struct keyinfo *key, int *digestlenp)
 {
 	FILE *fp = NULL;
 	char line[1024], secret[1024];

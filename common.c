@@ -890,7 +890,7 @@ in6_matchflags(struct sockaddr *addr, char *ifnam, int flags)
 }
 
 int
-get_duid(char *idfile, struct duid *duid)
+get_duid(const char *idfile, struct duid *duid)
 {
 	FILE *fp = NULL;
 	u_int16_t len = 0, hwtype;
@@ -1331,7 +1331,7 @@ dhcp6_get_options(struct dhcp6opt *p, struct dhcp6opt *ep,
 				goto malformed;
 			memcpy(&val16, cp, sizeof(val16));
 			val16 = ntohs(val16);
-			debugprintf(LOG_DEBUG, "", "  elapsed time: %lu",
+			debugprintf(LOG_DEBUG, "", "  elapsed time: %u",
 			    (u_int32_t)val16);
 			if (optinfo->elapsed_time !=
 			    DH6OPT_ELAPSED_TIME_UNDEF) {
@@ -1499,14 +1499,14 @@ dhcp6_get_options(struct dhcp6opt *p, struct dhcp6opt *ep,
 			ia.t2 = ntohl(optia.dh6_ia_t2);
 
 			debugprintf(LOG_DEBUG, "",
-			    "  IA_PD: ID=%lu, T1=%lu, T2=%lu",
+			    "  IA_PD: ID=%u, T1=%u, T2=%u",
 			    ia.iaid, ia.t1, ia.t2);
 
 			/* duplication check */
 			if (dhcp6_find_listval(&optinfo->iapd_list,
 			    DHCP6_LISTVAL_IAPD, &ia, 0)) {
 				debugprintf(LOG_INFO, FNAME,
-				    "duplicated IA_PD %lu", ia.iaid);
+				    "duplicated IA_PD %u", ia.iaid);
 				break; /* ignore this IA_PD */
 			}
 
@@ -1533,7 +1533,7 @@ dhcp6_get_options(struct dhcp6opt *p, struct dhcp6opt *ep,
 			memcpy(&val32, cp, sizeof(val32));
 			val32 = ntohl(val32);
 			debugprintf(LOG_DEBUG, "",
-			    "   information refresh time: %lu", val32);
+			    "   information refresh time: %u", val32);
 			if (val32 < DHCP6_IRT_MINIMUM) {
 				/*
 				 * A client MUST use the refresh time
@@ -1563,14 +1563,14 @@ dhcp6_get_options(struct dhcp6opt *p, struct dhcp6opt *ep,
 			ia.t2 = ntohl(optia.dh6_ia_t2);
 
 			debugprintf(LOG_DEBUG, "",
-			    "  IA_NA: ID=%lu, T1=%lu, T2=%lu",
+			    "  IA_NA: ID=%u, T1=%u, T2=%u",
 			    ia.iaid, ia.t1, ia.t2);
 
 			/* duplication check */
 			if (dhcp6_find_listval(&optinfo->iana_list,
 			    DHCP6_LISTVAL_IANA, &ia, 0)) {
 				debugprintf(LOG_INFO, FNAME,
-				    "duplicated IA_NA %lu", ia.iaid);
+				    "duplicated IA_NA %u", ia.iaid);
 				break; /* ignore this IA_NA */
 			}
 
@@ -1720,7 +1720,7 @@ copyin_option(int type, struct dhcp6opt *p, struct dhcp6opt *ep,
 			prefix6_mask(&iapd_prefix.addr, iapd_prefix.plen);
 
 			debugprintf(LOG_DEBUG, FNAME, "  IA_PD prefix: "
-			    "%s/%d pltime=%lu vltime=%lu",
+			    "%s/%d pltime=%u vltime=%u",
 			    in6addr2str(&iapd_prefix.addr, 0),
 			    iapd_prefix.plen,
 			    iapd_prefix.pltime, iapd_prefix.vltime);
@@ -1729,7 +1729,7 @@ copyin_option(int type, struct dhcp6opt *p, struct dhcp6opt *ep,
 			    &iapd_prefix, 0)) {
 				debugprintf(LOG_INFO, FNAME, 
 				    "duplicated IA_PD prefix "
-				    "%s/%d pltime=%lu vltime=%lu",
+				    "%s/%d pltime=%u vltime=%u",
 				    in6addr2str(&iapd_prefix.addr, 0),
 				    iapd_prefix.plen,
 				    iapd_prefix.pltime, iapd_prefix.vltime);
@@ -1771,7 +1771,7 @@ copyin_option(int type, struct dhcp6opt *p, struct dhcp6opt *ep,
 			    sizeof(ia_addr.addr));
 
 			debugprintf(LOG_DEBUG, FNAME, "  IA_NA address: "
-			    "%s pltime=%lu vltime=%lu",
+			    "%s pltime=%u vltime=%u",
 			    in6addr2str(&ia_addr.addr, 0),
 			    ia_addr.pltime, ia_addr.vltime);
 
@@ -1779,7 +1779,7 @@ copyin_option(int type, struct dhcp6opt *p, struct dhcp6opt *ep,
 			    DHCP6_LISTVAL_STATEFULADDR6, &ia_addr, 0)) {
 				debugprintf(LOG_INFO, FNAME, 
 				    "duplicated IA_NA address"
-				    "%s pltime=%lu vltime=%lu",
+				    "%s pltime=%u vltime=%u",
 				    in6addr2str(&ia_addr.addr, 0),
 				    ia_addr.pltime, ia_addr.vltime);
 				goto nextoption;
@@ -1873,9 +1873,12 @@ static char *
 sprint_auth(struct dhcp6_optinfo *optinfo)
 {
 	static char ret[1024];	/* XXX: thread unsafe */
-	char *proto, proto0[] = "unknown(255)";
-	char *alg, alg0[] = "unknown(255)";
-	char *rdm, rdm0[] = "unknown(255)";
+	const char *proto;
+	char proto0[] = "unknown(255)";
+	const char *alg; 
+	char alg0[] = "unknown(255)";
+	const char *rdm;
+	char rdm0[] = "unknown(255)";
 	char rd[] = "ffff ffff ffff ffff";
 
 	switch (optinfo->authproto) {
@@ -1950,7 +1953,7 @@ dhcp6_set_options(int type, struct dhcp6opt *optbp, struct dhcp6opt *optep,
 {
 	struct dhcp6opt *p = optbp;
 	struct dhcp6_listval *stcode, *op;
-	int len = 0, optlen;
+	int len = 0;
 	char *tmpbuf = NULL;
 
 	if (optinfo->clientID.duid_len) {
@@ -2039,6 +2042,7 @@ dhcp6_set_options(int type, struct dhcp6opt *optbp, struct dhcp6opt *optep,
 		struct dhcp6_listval *opt;
 		u_int16_t *valp;
 		int buflen;
+		int optlen;
 
 		tmpbuf = NULL;
 		buflen = dhcp6_count_list(&optinfo->reqopt_list) *
@@ -2520,7 +2524,7 @@ void
 dhcp6_reset_timer(struct dhcp6_event *ev)
 {
 	double n, r;
-	char *statestr;
+	const char *statestr;
 	struct timeval interval;
 
 	switch(ev->state) {
@@ -2568,7 +2572,7 @@ dhcp6_reset_timer(struct dhcp6_event *ev)
 	statestr = dhcp6_event_statestr(ev);
 
 	debugprintf(LOG_DEBUG, FNAME, "reset a timer on %s, "
-		"state=%s, timeo=%d, retrans=%d",
+		"state=%s, timeo=%d, retrans=%ld",
 		ev->ifp->ifname, statestr, ev->timeouts, ev->retrans);
 }
 
@@ -2624,7 +2628,7 @@ get_rdvalue(int rdm, void *rdvalue, size_t rdsize)
 		return (-1);
 	}
 	if (rdsize != sizeof(u_int64_t)) {
-		debugprintf(LOG_INFO, FNAME, "unsupported RD size (%d)", rdsize);
+		debugprintf(LOG_INFO, FNAME, "unsupported RD size (%ld)", rdsize);
 		return (-1);
 	}
 
@@ -2661,7 +2665,7 @@ get_rdvalue(int rdm, void *rdvalue, size_t rdsize)
 	return (0);
 }
 
-char *
+const char *
 dhcp6optstr(int type)
 {
 	static char genstr[sizeof("opt_65535") + 1]; /* XXX thread unsafe */
@@ -2748,7 +2752,7 @@ dhcp6optstr(int type)
 	}
 }
 
-char *
+const char *
 dhcp6msgstr(int type)
 {
 	static char genstr[sizeof("msg255") + 1]; /* XXX thread unsafe */
@@ -2789,7 +2793,7 @@ dhcp6msgstr(int type)
 	}
 }
 
-char *
+const char *
 dhcp6_stcodestr(u_int16_t code)
 {
 	static char genstr[sizeof("code255") + 1]; /* XXX thread unsafe */
@@ -2823,10 +2827,10 @@ duidstr(struct duid *duid)
 {
 	int i, n;
 	char *cp, *ep;
-	static char duidstr[sizeof("xx:") * 128 + sizeof("...")];
+	static char duidstring[sizeof("xx:") * 128 + sizeof("...")];
 
-	cp = duidstr;
-	ep = duidstr + sizeof(duidstr);
+	cp = duidstring;
+	ep = duidstring + sizeof(duidstring);
 	for (i = 0; i < duid->duid_len && i <= 128; i++) {
 		n = snprintf(cp, ep - cp, "%s%02x", i == 0 ? "" : ":",
 		    duid->duid_id[i] & 0xff);
@@ -2837,10 +2841,10 @@ duidstr(struct duid *duid)
 	if (i < duid->duid_len)
 		snprintf(cp, ep - cp, "%s", "...");
 
-	return (duidstr);
+	return (duidstring);
 }
 
-char *
+const char *
 dhcp6_event_statestr(struct dhcp6_event *ev)
 {
 	switch(ev->state) {
@@ -2932,7 +2936,7 @@ ifaddrconf(ifaddrconf_cmd_t cmd, char *ifname, struct sockaddr_in6 *addr,
 {
 	struct in6_aliasreq req;
 	unsigned long ioctl_cmd;
-	char *cmdstr;
+	const char *cmdstr;
 	int s;			/* XXX overhead */
 
 	switch(cmd) {

@@ -151,8 +151,9 @@ extern char *in6addr2str(struct in6_addr *, int);
 extern int in6_addrscopebyif(struct in6_addr *, char *);
 extern int in6_scope(struct in6_addr *);
 extern void setloglevel(int);
-extern void debugprintf(int, const char *, const char *, ...);
-extern int get_duid(char *, struct duid *);
+extern void debugprintf(int, const char *, const char *, ...) 
+	__attribute__((__format__ (printf, 3, 4)));
+extern int get_duid(const char *, struct duid *);
 extern void dhcp6_init_options(struct dhcp6_optinfo *);
 extern void dhcp6_clear_options(struct dhcp6_optinfo *);
 extern int dhcp6_copy_options(struct dhcp6_optinfo *,
@@ -163,11 +164,11 @@ extern int dhcp6_set_options(int, struct dhcp6opt *, struct dhcp6opt *,
 				  struct dhcp6_optinfo *);
 extern void dhcp6_set_timeoparam(struct dhcp6_event *);
 extern void dhcp6_reset_timer(struct dhcp6_event *);
-extern char *dhcp6optstr(int);
-extern char *dhcp6msgstr(int);
-extern char *dhcp6_stcodestr(u_int16_t);
+extern const char *dhcp6optstr(int);
+extern const char *dhcp6msgstr(int);
+extern const char *dhcp6_stcodestr(u_int16_t);
 extern char *duidstr(struct duid *);
-extern char *dhcp6_event_statestr(struct dhcp6_event *);
+extern const char *dhcp6_event_statestr(struct dhcp6_event *);
 extern int get_rdvalue(int, void *, size_t);
 extern int duidcpy(struct duid *, struct duid *);
 extern int duidcmp(struct duid *, struct duid *);

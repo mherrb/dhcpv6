@@ -76,19 +76,19 @@ const dhcp6_mode_t dhcp6_mode = DHCP6_MODE_CLIENT;
 
 int sock;	/* inbound/outbound udp port */
 int ctlsock = -1;		/* control TCP port */
-char *ctladdr = DEFAULT_CLIENT_CONTROL_ADDR;
-char *ctlport = DEFAULT_CLIENT_CONTROL_PORT;
+const char *ctladdr = DEFAULT_CLIENT_CONTROL_ADDR;
+const char *ctlport = DEFAULT_CLIENT_CONTROL_PORT;
 
 #define DEFAULT_KEYFILE SYSCONFDIR "/dhcp6cctlkey"
 #define CTLSKEW 300
 
-static char *conffile = DHCP6C_CONF;
+static const char *conffile = DHCP6C_CONF;
 
 static const struct sockaddr_in6 *sa6_allagent;
 static struct duid client_duid;
-static char *pid_file = DHCP6C_PIDFILE;
+static const char *pid_file = DHCP6C_PIDFILE;
 
-static char *ctlkeyfile = DEFAULT_KEYFILE;
+static const char *ctlkeyfile = DEFAULT_KEYFILE;
 static struct keyinfo *ctlkey = NULL;
 static int ctldigestlen;
 
@@ -101,7 +101,7 @@ static void usage(void);
 static void client6_init(void);
 static void client6_startall(int);
 static void free_resources(struct dhcp6_if *);
-static void client6_mainloop(void);
+static void client6_mainloop(void) __attribute__((__noreturn__));
 static int client6_do_ctlcommand(char *, ssize_t);
 static void client6_reload(void);
 static int client6_ifctl(char *ifname, u_int16_t);
@@ -130,7 +130,7 @@ static int set_auth(struct dhcp6_event *, struct dhcp6_optinfo *);
 
 struct dhcp6_timer *client6_timo(void *);
 int client6_start(struct dhcp6_if *);
-static void info_printf(const char *, ...);
+static void info_printf(const char *, ...) __attribute__((__format__ (printf, 1, 2)));
 
 extern int client6_script(char *, int, struct dhcp6_optinfo *);
 
@@ -1381,7 +1381,7 @@ client6_recv(void)
 	}
 
 	if (len < sizeof(*dh6)) {
-		debugprintf(LOG_INFO, FNAME, "short packet (%d bytes)", len);
+		debugprintf(LOG_INFO, FNAME, "short packet (%ld bytes)", len);
 		return;
 	}
 
@@ -1472,7 +1472,7 @@ client6_recvadvert(struct dhcp6_if *ifp, struct dhcp6 *dh6,
 	for (evd = TAILQ_FIRST(&ev->data_list); evd;
 	    evd = TAILQ_NEXT(evd, link)) {
 		u_int16_t stcode;
-		char *stcodestr;
+		const char *stcodestr;
 
 		switch (evd->type) {
 		case DHCP6_EVDATA_IAPD:
@@ -1800,8 +1800,8 @@ client6_recvreply(struct dhcp6_if *ifp, struct dhcp6 *dh6,
 				 * unsigned 32bit value.
 				 */
 				debugprintf(LOG_WARNING, FNAME,
-				    "refresh time is too large: %lu",
-				    (u_int32_t)refreshtime);
+				    "refresh time is too large: %llu",
+				    (u_int64_t)refreshtime);
 				tv.tv_sec = 0x7fffffff;	/* XXX */
 			}
 

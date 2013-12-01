@@ -214,7 +214,8 @@ static char *
 iapd2str(int num, struct dhcp6_listval *iav)
 {
 	struct dhcp6_listval *siav;
-	char *s, *r, *comma;
+	char *s, *r;
+	const char *comma;
 
 	s = buf;
 	memset(s, 0, BUFSIZ);
@@ -253,7 +254,8 @@ static char *
 iana2str(int num, struct dhcp6_listval *iav)
 {
 	struct dhcp6_listval *siav;
-	char *s, *r, *comma;
+	char *s, *r;
+	const char *comma;
 
 	s = buf;
 	memset(s, 0, BUFSIZ);

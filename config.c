@@ -117,7 +117,7 @@ extern char *configfilename;
 static struct keyinfo *find_keybyname(struct keyinfo *, char *);
 static int add_pd_pif(struct iapd_conf *, struct cf_list *);
 static int add_options(int, struct dhcp6_ifconf *, struct cf_list *);
-static int add_prefix(struct dhcp6_list *, char *, int,
+static int add_prefix(struct dhcp6_list *, const char *, int,
     struct dhcp6_prefix *);
 static void clear_pd_pif(struct iapd_conf *);
 static void clear_ifconf(struct dhcp6_ifconf *);
@@ -126,8 +126,9 @@ static void clear_hostconf(struct host_conf *);
 static void clear_keys(struct keyinfo *);
 static void clear_authinfo(struct authinfo *);
 static int configure_duid(char *, struct duid *);
-static int configure_addr(struct cf_list *, struct dhcp6_list *, char *);
-static int configure_domain(struct cf_list *, struct dhcp6_list *, char *);
+static int configure_addr(struct cf_list *, struct dhcp6_list *, const char *);
+static int configure_domain(struct cf_list *, struct dhcp6_list *, 
+    const char *);
 static int get_default_ifid(struct prefix_ifconf *);
 static void clear_poolconf(struct pool_conf *);
 static struct pool_conf *create_pool(char *, struct dhcp6_range *);
@@ -271,7 +272,7 @@ configure_interface(struct cf_namelist *iflist)
 					if (spec->vltime != DHCP6_DURATION_INFINITE &&
 						(spec->pltime == DHCP6_DURATION_INFINITE ||
 						spec->pltime > spec->vltime)) {
-						debugprintf(LOG_ERR, FNAME, "%s:%d ",
+						debugprintf(LOG_ERR, FNAME, "%s:%d %s",
 							configfilename, cfl->line,
 							"specified a larger preferred lifetime "
 							"than valid lifetime");
@@ -431,14 +432,14 @@ add_pd_pif(struct iapd_conf *iapdc, struct cf_list *cfl0)
 		if (strcmp(pif->ifname, cfl0->ptr) == 0) {
 			debugprintf(LOG_NOTICE, FNAME, "%s:%d "
 			    "duplicated prefix interface: %s",
-			    configfilename, cfl0->line, cfl0->ptr);
+			    configfilename, cfl0->line, (char *)cfl0->ptr);
 			return (0); /* ignore it */
 		}
 	}
 
 	if ((pif = malloc(sizeof(*pif))) == NULL) {
 		debugprintf(LOG_ERR, FNAME,
-		    "memory allocation for %s failed", cfl0->ptr);
+		    "memory allocation for %s failed", (char *)cfl0->ptr);
 		goto bad;
 	}
 	memset(pif, 0, sizeof(*pif));
@@ -447,7 +448,7 @@ add_pd_pif(struct iapd_conf *iapdc, struct cf_list *cfl0)
 	if (if_nametoindex(cfl0->ptr) == 0) {
 		debugprintf(LOG_ERR, FNAME, "%s:%d invalid interface (%s): %s",
 		    configfilename, cfl0->line,
-		    cfl0->ptr, strerror(errno));
+		    (char *)cfl0->ptr, strerror(errno));
 		goto bad;
 	}
 	if ((pif->ifname = strdup(cfl0->ptr)) == NULL) {
@@ -569,7 +570,7 @@ configure_host(struct cf_namelist *hostlist)
 					debugprintf(LOG_WARNING, FNAME,
 					    "%s:%d: duplicate key %s for %s"
 					    " (ignored)", configfilename,
-					    cfl->line, cfl->ptr, host->name);
+					    cfl->line, (char *)cfl->ptr, host->name);
 					continue;
 				}
 				if ((hconf->delayedkey =
@@ -577,7 +578,7 @@ configure_host(struct cf_namelist *hostlist)
 				    == NULL) {
 					debugprintf(LOG_ERR, FNAME, "failed to "
 					    "find key information for %s",
-					    cfl->ptr);
+					    (char *)cfl->ptr);
 					goto bad;
 				}
 				debugprintf(LOG_DEBUG, FNAME, "configure key for "
@@ -604,7 +605,7 @@ configure_host(struct cf_namelist *hostlist)
 					if (spec->vltime != DHCP6_DURATION_INFINITE &&
 						(spec->pltime == DHCP6_DURATION_INFINITE ||
 						spec->pltime > spec->vltime)) {
-						debugprintf(LOG_ERR, FNAME, "%s:%d ",
+						debugprintf(LOG_ERR, FNAME, "%s:%d %s",
 							configfilename, cfl->line,
 							"specified a larger preferred lifetime "
 							"than valid lifetime");
@@ -693,7 +694,8 @@ configure_keys(struct cf_namelist *keylist)
 					debugprintf(LOG_WARNING, FNAME,
 					    "%s:%d duplicate realm for key %s "
 					    "(ignored)",
-					    configfilename, cfl->line);
+					    configfilename, cfl->line,
+					    key->name);
 					continue;
 				}
 				keyid = cfl->num;
@@ -800,7 +802,7 @@ configure_keys(struct cf_namelist *keylist)
 				    == NULL &&
 				    strptime(expire, "%H:%M", lt) == NULL) {
 					debugprintf(LOG_ERR, FNAME, "invalid "
-					    "expiration time: %s");
+					    "expiration time: %s", expire);
 					goto bad;
 				}
 
@@ -1012,7 +1014,7 @@ configure_global_option(void)
 
 static int
 configure_addr(struct cf_list *cf_addr_list, struct dhcp6_list *list0,
-    char *optname)
+    const char *optname)
 {
 	struct cf_list *cl;
 
@@ -1048,7 +1050,7 @@ configure_addr(struct cf_list *cf_addr_list, struct dhcp6_list *list0,
 
 static int
 configure_domain(struct cf_list *cf_name_list, 
-    struct dhcp6_list *list0, char *optname)
+    struct dhcp6_list *list0, const char *optname)
 {
 	struct cf_list *cl;
 
@@ -1672,7 +1674,7 @@ add_options(int opcode, struct dhcp6_ifconf *ifc, struct cf_list *cfl0)
 }
 
 static int
-add_prefix(struct dhcp6_list *head, char *name, int type,
+add_prefix(struct dhcp6_list *head, const char *name, int type,
     struct dhcp6_prefix *prefix0)
 {
 	struct dhcp6_prefix oprefix;
@@ -1912,7 +1914,7 @@ create_dynamic_hostconf(struct duid *duid, struct dhcp6_poolspec *pool)
 {
 	struct dynamic_hostconf *dynconf = NULL;
 	struct host_conf *host;
-	char* strid = NULL;
+	const char* strid = NULL;
 	static int init = 1;
 
 	if (init) {
@@ -1924,7 +1926,7 @@ create_dynamic_hostconf(struct duid *duid, struct dhcp6_poolspec *pool)
 	if (dynamic_hostconf_count >= DHCP6_DYNAMIC_HOSTCONF_MAX) {
 		struct dynamic_hostconf_listhead *head = &dynamic_hostconf_head;
 
-		debugprintf(LOG_DEBUG, FNAME, "reached to the max count (count=%lu)",
+		debugprintf(LOG_DEBUG, FNAME, "reached to the max count (count=%u)",
 			dynamic_hostconf_count);
 
 		/* Find the last entry that doesn't need authentication */

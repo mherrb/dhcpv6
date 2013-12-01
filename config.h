@@ -311,7 +311,7 @@ extern int configure_ia(struct cf_namelist *, iatype_t);
 extern int configure_global_option(void);
 extern void configure_cleanup(void);
 extern void configure_commit(void);
-extern int cfparse(char *);
+extern int cfparse(const char *);
 extern struct dhcp6_if *find_ifconfbyname(char *);
 extern struct dhcp6_if *find_ifconfbyid(unsigned int);
 extern struct prefix_ifconf *find_prefixifconf(char *);

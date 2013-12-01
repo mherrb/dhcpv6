@@ -131,7 +131,7 @@ update_prefix(struct ia *ia, struct dhcp6_prefix *pinfo,
 	    (pinfo->pltime == DHCP6_DURATION_INFINITE ||
 	    pinfo->pltime > pinfo->vltime)) {
 		debugprintf(LOG_INFO, FNAME, "invalid prefix %s/%d: "
-		    "pltime (%lu) is larger than vltime (%lu)",
+		    "pltime (%u) is larger than vltime (%u)",
 		    in6addr2str(&pinfo->addr, 0), pinfo->plen,
 		    pinfo->pltime, pinfo->vltime);
 		return (-1);
@@ -181,7 +181,7 @@ update_prefix(struct ia *ia, struct dhcp6_prefix *pinfo,
 	/* update the prefix according to pinfo */
 	sp->prefix.pltime = pinfo->pltime;
 	sp->prefix.vltime = pinfo->vltime;
-	debugprintf(LOG_DEBUG, FNAME, "%s a prefix %s/%d pltime=%lu, vltime=%lu",
+	debugprintf(LOG_DEBUG, FNAME, "%s a prefix %s/%d pltime=%u, vltime=%u",
 	    spcreate ? "create" : "update",
 	    in6addr2str(&pinfo->addr, 0), pinfo->plen,
 	    pinfo->pltime, pinfo->vltime);

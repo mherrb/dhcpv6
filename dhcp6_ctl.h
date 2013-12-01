@@ -37,8 +37,8 @@
 
 struct dhcp6_commandctx;	/* opaque type */
 
-extern int dhcp6_ctl_init(char *, char *, int, int *);
-extern int dhcp6_ctl_authinit(char *, struct keyinfo **, int *);
+extern int dhcp6_ctl_init(const char *, const char *, int, int *);
+extern int dhcp6_ctl_authinit(const char *, struct keyinfo **, int *);
 extern int dhcp6_ctl_acceptcommand(int, int (*)(char *, ssize_t));
 extern void dhcp6_ctl_closecommand(struct dhcp6_commandctx *);
 extern int dhcp6_ctl_readcommand(fd_set *);

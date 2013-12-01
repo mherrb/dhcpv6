@@ -87,8 +87,8 @@ static struct ia *get_ia(iatype_t, struct dhcp6_if *, struct ia_conf *,
 static struct ia *find_ia(struct ia_conf *, iatype_t, u_int32_t);
 static struct dhcp6_timer *ia_timo(void *);
 
-static char *iastr(iatype_t);
-static char *statestr(iastate_t);
+static const char *iastr(iatype_t);
+static const char *statestr(iastate_t);
 
 void
 update_ia(iatype_t iatype, struct dhcp6_list *ialist, struct dhcp6_if *ifp,
@@ -119,7 +119,7 @@ update_ia(iatype_t iatype, struct dhcp6_list *ialist, struct dhcp6_if *ifp,
 		 */
 		if (iav->val_ia.t2 != 0 && iav->val_ia.t1 > iav->val_ia.t2) {
 			debugprintf(LOG_INFO, FNAME,
-			    "invalid IA: T1(%lu) > T2(%lu)",
+			    "invalid IA: T1(%u) > T2(%u)",
 			    iav->val_ia.t1, iav->val_ia.t2);
 			continue;
 		}
@@ -168,7 +168,7 @@ update_ia(iatype_t iatype, struct dhcp6_list *ialist, struct dhcp6_if *ifp,
 				break;
 			case DHCP6_LISTVAL_STCODE:
 				debugprintf(LOG_INFO, FNAME,
-				    "status code for %s-%lu: %s",
+				    "status code for %s-%u: %s",
 				    iastr(iatype), iav->val_ia.iaid,
 				    dhcp6_stcodestr(siav->val_num16));
 				if ((ia->state == IAS_RENEW ||
@@ -185,7 +185,7 @@ update_ia(iatype_t iatype, struct dhcp6_list *ialist, struct dhcp6_if *ifp,
 					 */
 					debugprintf(LOG_INFO, FNAME,
 					    "receive NoBinding against "
-					    "renew/rebind for %s-%lu",
+					    "renew/rebind for %s-%u",
 					    iastr(ia->conf->type),
 					    ia->conf->iaid);
 					reestablish_ia(ia);
@@ -200,7 +200,7 @@ update_ia(iatype_t iatype, struct dhcp6_list *ialist, struct dhcp6_if *ifp,
 
 		/* see if this IA is still valid.  if not, remove it. */
 		if (ia->ctl == NULL || !(*ia->ctl->isvalid)(ia->ctl)) {
-			debugprintf(LOG_DEBUG, FNAME, "IA %s-%lu is invalidated",
+			debugprintf(LOG_DEBUG, FNAME, "IA %s-%u is invalidated",
 			    iastr(ia->conf->type), ia->conf->iaid);
 			remove_ia(ia);
 			continue;
@@ -232,7 +232,7 @@ update_ia(iatype_t iatype, struct dhcp6_list *ialist, struct dhcp6_if *ifp,
 			if (ia->t1 > ia->t2)
 				ia->t1 = ia->t2 * 5 / 8;
 
-			debugprintf(LOG_INFO, FNAME, "T1(%lu) and/or T2(%lu) "
+			debugprintf(LOG_INFO, FNAME, "T1(%u) and/or T2(%u) "
 			    "is locally determined",  ia->t1, ia->t2);
 		}
 
@@ -242,11 +242,11 @@ update_ia(iatype_t iatype, struct dhcp6_list *ialist, struct dhcp6_if *ifp,
 		 * without renewal.
 		 */
 		if (ia->t2 < DHCP6_DURATION_MIN) {
-			debugprintf(LOG_INFO, FNAME, "T1 (%lu) or T2 (%lu) "
+			debugprintf(LOG_INFO, FNAME, "T1 (%u) or T2 (%u) "
 			    "is too small", ia->t1, ia->t2);
 			ia->t2 = DHCP6_DURATION_MIN;
 			ia->t1 = ia->t2 * 5 / 8;
-			debugprintf(LOG_INFO, "", "  adjusted to %lu and %lu",
+			debugprintf(LOG_INFO, "", "  adjusted to %u and %u",
 			    ia->t1, ia->t2);
 		}
 
@@ -304,7 +304,7 @@ reestablish_ia(struct ia *ia)
 	struct dhcp6_event *ev;
 	struct dhcp6_eventdata *evd;
 
-	debugprintf(LOG_DEBUG, FNAME, "re-establishing IA: %s-%lu", 
+	debugprintf(LOG_DEBUG, FNAME, "re-establishing IA: %s-%u", 
 	    iastr(ia->conf->type), ia->conf->iaid);
 
 	if (ia->state != IAS_RENEW && ia->state != IAS_REBIND) {
@@ -394,7 +394,7 @@ callback(struct ia *ia)
 {
 	/* see if this IA is still valid.  if not, remove it. */
 	if (ia->ctl == NULL || !(*ia->ctl->isvalid)(ia->ctl)) {
-		debugprintf(LOG_DEBUG, FNAME, "IA %s-%lu is invalidated",
+		debugprintf(LOG_DEBUG, FNAME, "IA %s-%u is invalidated",
 		    iastr(ia->conf->type), ia->conf->iaid);
 		remove_ia(ia);
 	}
@@ -431,7 +431,7 @@ release_ia(struct ia *ia)
 	struct dhcp6_event *ev;
 	struct dhcp6_eventdata *evd;
 
-	debugprintf(LOG_DEBUG, FNAME, "release an IA: %s-%lu",
+	debugprintf(LOG_DEBUG, FNAME, "release an IA: %s-%u",
 	    iastr(ia->conf->type), ia->conf->iaid);
 
 	if ((ev = dhcp6_create_event(ia->ifp, DHCP6S_RELEASE))
@@ -502,7 +502,7 @@ remove_ia(struct ia *ia)
 	struct ia_conf *iac = ia->conf;
 	struct dhcp6_if *ifp = ia->ifp;
 
-	debugprintf(LOG_DEBUG, FNAME, "remove an IA: %s-%lu",
+	debugprintf(LOG_DEBUG, FNAME, "remove an IA: %s-%u",
 	    iastr(ia->conf->type), ia->conf->iaid);
 
 	TAILQ_REMOVE(&iac->iadata, ia, link);
@@ -541,7 +541,7 @@ ia_timo(void *arg)
 	struct timeval timo;
 	int dhcpstate;
 
-	debugprintf(LOG_DEBUG, FNAME, "IA timeout for %s-%lu, state=%s",
+	debugprintf(LOG_DEBUG, FNAME, "IA timeout for %s-%u, state=%s",
 	    iastr(ia->conf->type), ia->conf->iaid, statestr(ia->state));
 
 	/* cancel the current event for the prefix. */
@@ -702,7 +702,7 @@ get_ia(iatype_t type, struct dhcp6_if *ifp, struct ia_conf *iac,
 	ia->ifp = ifp;
 	ia->serverid = newserver;
 
-	debugprintf(LOG_DEBUG, FNAME, "%s an IA: %s-%lu",
+	debugprintf(LOG_DEBUG, FNAME, "%s an IA: %s-%u",
 	    create ? "make" : "update", iastr(type), ia->conf->iaid);
 
 	return (ia);
@@ -722,7 +722,7 @@ find_ia(struct ia_conf *iac, iatype_t type, u_int32_t iaid)
 	return (NULL);
 }
 
-static char *
+static const char *
 iastr(iatype_t type)
 {
 	switch (type) {
@@ -735,7 +735,7 @@ iastr(iatype_t type)
 	}
 }
 
-static char *
+static const char *
 statestr(iastate_t state)
 {
 	switch (state) {

@@ -13,6 +13,11 @@ CFLAGS+=	-DSYSCONFDIR=\"/etc/\" \
 		-DHAVE_TAILQ_FOREACH_REVERSE_OLD=1 \
 		-DHAVE_SA_LEN=1 \
 
-CFLAGS+=	-Wall -Werror
+CFLAGS+=	-Wunused -Wshadow -Wcast-qual
+CFLAGS+=	-Wmissing-format-attribute -Wimplicit -Wnonnull
+CFLAGS+=	-Winit-self -Wmain -Wmissing-braces -Wsequence-point 
+CFLAGS+=	-Wreturn-type -Wtrigraphs -Wwrite-strings
+CFLAGS+=	-Waddress -Wint-to-pointer-cast -Wpointer-to-int-cast
+CFLAGS+=	-Wall -Werror -std=c99
 
 .include <bsd.obj.mk>
