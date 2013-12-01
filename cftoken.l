@@ -331,9 +331,7 @@ ecl		\}
 
 %%
 static void
-cfdebug_print(w, t, l)
-	char *w, *t;
-	int l;
+cfdebug_print(char *w, char *t, int l)
 {
 	if (w) {
 		debugprintf(LOG_DEBUG, FNAME,
@@ -378,8 +376,7 @@ yywarn(char *s, ...)
 }
 
 int
-cfswitch_buffer(incl)
-	char *incl;
+cfswitch_buffer(char *incl)
 {
 	char *path = qstrdup(incl);
 	FILE *fp;
@@ -411,8 +408,7 @@ cfswitch_buffer(incl)
 }
 
 int
-cfparse(conf)
-	char *conf;
+cfparse(char *conf)
 {
 	configfilename = conf;
 	if ((yyin = fopen(configfilename, "r")) == NULL) {

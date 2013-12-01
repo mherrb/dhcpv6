@@ -1197,8 +1197,7 @@ keyparam:
 %%
 /* supplement routines for configuration */
 static int
-add_namelist(new, headp)
-	struct cf_namelist *new, **headp;
+add_namelist(struct cf_namelist *new, struct cf_namelist **headp)
 {
 	struct cf_namelist *n;
 	
@@ -1220,7 +1219,7 @@ add_namelist(new, headp)
 
 /* free temporary resources */
 static void
-cleanup()
+cleanup(void)
 {
 	cleanup_namelist(iflist_head);
 	iflist_head = NULL;
@@ -1262,8 +1261,7 @@ cleanup()
 }
 
 static void
-cleanup_namelist(head)
-	struct cf_namelist *head;
+cleanup_namelist(struct cf_namelist *head)
 {
 	struct cf_namelist *ifp, *ifp_next;
 
@@ -1276,8 +1274,7 @@ cleanup_namelist(head)
 }
 
 static void
-cleanup_cflist(p)
-	struct cf_list *p;
+cleanup_cflist(struct cf_list *p)
 {
 	struct cf_list *n;
 
@@ -1301,7 +1298,7 @@ cleanup_cflist(p)
 	do { cleanup(); configure_cleanup(); return (-1); } while(0)
 
 int
-cf_post_config()
+cf_post_config(void)
 {
 	if (configure_keys(keylist_head))
 		config_fail();
@@ -1334,7 +1331,7 @@ cf_post_config()
 #undef config_fail
 
 void
-cf_init()
+cf_init(void)
 {
 	iflist_head = NULL;
 }

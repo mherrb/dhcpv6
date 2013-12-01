@@ -96,12 +96,9 @@ static int na_ifaddrconf(ifaddrconf_cmd_t, struct statefuladdr *);
 extern struct dhcp6_timer *client6_timo(void *);
 
 int
-update_address(ia, addr, dhcpifp, ctlp, callback)
-	struct ia *ia;
-	struct dhcp6_statefuladdr *addr;
-	struct dhcp6_if *dhcpifp;
-	struct iactl **ctlp;
-	void (*callback)(struct ia *);
+update_address(struct ia *ia, struct dhcp6_statefuladdr *addr, 
+    struct dhcp6_if *dhcpifp, struct iactl **ctlp, 
+    void (*callback)(struct ia *))
 {
 	struct iactl_na *iac_na = (struct iactl_na *)*ctlp;
 	struct statefuladdr *sa;
@@ -206,9 +203,7 @@ update_address(ia, addr, dhcpifp, ctlp, callback)
 }
 
 static struct statefuladdr *
-find_addr(head, addr)
-	struct statefuladdr_list *head;
-	struct dhcp6_statefuladdr *addr;
+find_addr(struct statefuladdr_list *head, struct dhcp6_statefuladdr *addr)
 {
 	struct statefuladdr *sa;
 
@@ -222,8 +217,7 @@ find_addr(head, addr)
 }
 
 static int
-remove_addr(sa)
-	struct statefuladdr *sa;
+remove_addr(struct statefuladdr *sa)
 {
 	int ret;
 
@@ -241,8 +235,7 @@ remove_addr(sa)
 }
 
 static int
-isvalid_addr(iac)
-	struct iactl *iac;
+isvalid_addr(struct iactl *iac)
 {
 	struct iactl_na *iac_na = (struct iactl_na *)iac;
 
@@ -252,8 +245,7 @@ isvalid_addr(iac)
 }
 
 static u_int32_t
-duration_addr(iac)
-	struct iactl *iac;
+duration_addr(struct iactl *iac)
 {
 	struct iactl_na *iac_na = (struct iactl_na *)iac;
 	struct statefuladdr *sa;
@@ -277,8 +269,7 @@ duration_addr(iac)
 }
 
 static void
-cleanup_addr(iac)
-	struct iactl *iac;
+cleanup_addr( struct iactl *iac)
 {
 	struct iactl_na *iac_na = (struct iactl_na *)iac;
 	struct statefuladdr *sa;
@@ -292,10 +283,8 @@ cleanup_addr(iac)
 }
 
 static int
-renew_addr(iac, iaparam, evdp, evd)
-	struct iactl *iac;
-	struct dhcp6_ia *iaparam;
-	struct dhcp6_eventdata **evdp, *evd;
+renew_addr(struct iactl *iac, struct dhcp6_ia *iaparam,
+    struct dhcp6_eventdata **evdp, struct dhcp6_eventdata *evd)
 {
 	struct iactl_na *iac_na = (struct iactl_na *)iac;
 	struct statefuladdr *sa;
@@ -331,8 +320,7 @@ renew_addr(iac, iaparam, evdp, evd)
 }
 
 static void
-na_renew_data_free(evd)
-	struct dhcp6_eventdata *evd;
+na_renew_data_free(struct dhcp6_eventdata *evd)
 {
 	struct dhcp6_list *ial;
 
@@ -349,8 +337,7 @@ na_renew_data_free(evd)
 }
 
 static struct dhcp6_timer *
-addr_timo(arg)
-	void *arg;
+addr_timo(void *arg)
 {
 	struct statefuladdr *sa = (struct statefuladdr *)arg;
 	struct ia *ia;
@@ -373,9 +360,7 @@ addr_timo(arg)
 }
 
 static int
-na_ifaddrconf(cmd, sa)
-	ifaddrconf_cmd_t cmd;
-	struct statefuladdr *sa;
+na_ifaddrconf(ifaddrconf_cmd_t cmd, struct statefuladdr *sa)
 {
 	struct dhcp6_statefuladdr *addr;
 	struct sockaddr_in6 sin6;

@@ -72,14 +72,12 @@ static int parse_duid(char *, int *, char **, int *);
 static void usage(void);
 
 int
-main(argc, argv)
-	int argc;
-	char *argv[];
+main(int argc, char *argv[])
 {
 	int cc, ch, s, error, passed;
 	int Cflag = 0, Sflag = 0;
-	char *cbuf;
-	size_t clen;
+	char *cbuf = NULL;
+	size_t clen = 0;
 	struct addrinfo hints, *res0, *res;
 	int digestlen;
 	char *keyfile = NULL;
@@ -194,10 +192,7 @@ main(argc, argv)
 }
 
 static int
-setup_auth(keyfile, key, digestlenp)
-	char *keyfile;
-	struct keyinfo *key;
-	int *digestlenp;
+setup_auth(char *keyfile, struct keyinfo *key, int *digestlenp)
 {
 	FILE *fp = NULL;
 	char line[1024], secret[1024];
@@ -241,10 +236,7 @@ setup_auth(keyfile, key, digestlenp)
 }
 
 static inline int
-put16(bpp, lenp, val)
-	char **bpp;
-	int *lenp;
-	u_int16_t val;
+put16(char **bpp, int *lenp, u_int16_t val)
 {
 	char *bp = *bpp;
 	int len = *lenp;
@@ -264,10 +256,7 @@ put16(bpp, lenp, val)
 }
 
 static inline int
-put32(bpp, lenp, val)
-	char **bpp;
-	int *lenp;
-	u_int32_t val;
+put32(char **bpp, int *lenp, u_int32_t val)
 {
 	char *bp = *bpp;
 	int len = *lenp;
@@ -287,11 +276,7 @@ put32(bpp, lenp, val)
 }
 
 static inline int
-putval(bpp, lenp, val, valsize)
-	char **bpp;
-	int *lenp;
-	void *val;
-	size_t valsize;
+putval(char **bpp, int *lenp, void *val, size_t valsize)
 {
 	char *bp = *bpp;
 	int len = *lenp;
@@ -310,12 +295,8 @@ putval(bpp, lenp, val, valsize)
 }
 
 static int
-make_command(argc, argv, bufp, lenp, key, authlen)
-	int argc;
-	char **argv, **bufp;
-	size_t *lenp;
-	struct keyinfo *key;
-	int authlen;
+make_command(int argc, char **argv, char **bufp, size_t *lenp,
+    struct keyinfo *key, int authlen)
 {
 	struct dhcp6ctl ctl;
 	char commandbuf[4096];	/* XXX: ad-hoc value */
@@ -405,9 +386,7 @@ make_command(argc, argv, bufp, lenp, key, authlen)
 }
 
 static int
-make_remove_command(argc, argv, bpp, lenp)
-	int argc, *lenp;
-	char **argv, **bpp;
+make_remove_command(int argc, char **argv, char **bpp, int *lenp)
 {
 	int argc_passed = 0, passed;
 
@@ -438,9 +417,7 @@ make_remove_command(argc, argv, bpp, lenp)
 }
 
 static int
-make_start_command(argc, argv, bpp, lenp)
-	int argc, *lenp;
-	char **argv, **bpp;
+make_start_command(int argc, char **argv, char **bpp, int *lenp)
 {
 	int argc_passed = 0, passed;
 
@@ -476,9 +453,7 @@ make_start_command(argc, argv, bpp, lenp)
 }
 
 static int
-make_stop_command(argc, argv, bpp, lenp)
-	int argc, *lenp;
-	char **argv, **bpp;
+make_stop_command(int argc, char **argv, char **bpp, int *lenp)
 {
 	int argc_passed = 0, passed;
 
@@ -512,9 +487,7 @@ make_stop_command(argc, argv, bpp, lenp)
 }
 
 static int
-make_interface_object(argc, argv, bpp, lenp)
-	int argc, *lenp;
-	char **argv, **bpp;
+make_interface_object(int argc, char **argv, char **bpp, int *lenp)
 {
 	int iflen;
 	int argc_passed = 0;
@@ -539,9 +512,7 @@ make_interface_object(argc, argv, bpp, lenp)
 }	
 
 static int
-make_binding_object(argc, argv, bpp, lenp)
-	int argc, *lenp;
-	char **argv, **bpp;
+make_binding_object(int argc, char **argv, char **bpp, int *lenp)
 {
 	int argc_passed = 0, passed;
 
@@ -573,9 +544,7 @@ make_binding_object(argc, argv, bpp, lenp)
 }
 
 static int
-make_ia_object(argc, argv, bpp, lenp)
-	int argc, *lenp;
-	char **argv, **bpp;
+make_ia_object(int argc, char **argv, char **bpp, int *lenp)
 {
 	struct dhcp6ctl_iaspec iaspec;
 	int duidlen, dummylen = 0;
@@ -624,11 +593,7 @@ make_ia_object(argc, argv, bpp, lenp)
 }
 
 static int
-parse_duid(str, lenp, bufp, buflenp)
-	char *str;
-	int *lenp;
-	char **bufp;
-	int *buflenp;
+parse_duid(char *str, int *lenp, char **bufp, int *buflenp)
 {
 	char *buf = *bufp;
 	char *cp, *bp;
@@ -685,7 +650,7 @@ parse_duid(str, lenp, bufp, buflenp)
 }
 
 static void
-usage()
+usage(void)
 {
 	fprintf(stderr, "usage: dhcp6ctl [-C|-S] [-a ctladdr] [-k keyfile] "
 	    "[-p ctlport] command...\n");

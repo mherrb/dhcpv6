@@ -58,11 +58,8 @@ static char *iapd2str(int, struct dhcp6_listval *);
 static char *iana2str(int, struct dhcp6_listval *);
 
 int
-relay6_script(scriptpath, client, dh6, len)
-	char *scriptpath;
-	struct sockaddr_in6 *client;
-	struct dhcp6 *dh6;
-	int len;
+relay6_script(char *scriptpath, struct sockaddr_in6 *client,
+    struct dhcp6 *dh6, int len)
 {
 	struct dhcp6_optinfo optinfo;
 	struct dhcp6opt *optend;
@@ -214,9 +211,7 @@ relay6_script(scriptpath, client, dh6, len)
 }
 
 static char *
-iapd2str(num, iav)
-	int num;
-	struct dhcp6_listval *iav;
+iapd2str(int num, struct dhcp6_listval *iav)
 {
 	struct dhcp6_listval *siav;
 	char *s, *r, *comma;
@@ -255,9 +250,7 @@ iapd2str(num, iav)
 }
 
 static char *
-iana2str(num, iav)
-	int num;
-	struct dhcp6_listval *iav;
+iana2str(int num, struct dhcp6_listval *iav)
 {
 	struct dhcp6_listval *siav;
 	char *s, *r, *comma;

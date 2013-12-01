@@ -137,9 +137,7 @@ extern int client6_script(char *, int, struct dhcp6_optinfo *);
 #define MAX_ELAPSED_TIME 0xffff
 
 int
-main(argc, argv)
-	int argc;
-	char **argv;
+main(int argc, char *argv[])
 {
 	int ch, pid;
 	char *progname;
@@ -225,7 +223,7 @@ main(argc, argv)
 }
 
 static void
-usage()
+usage(void)
 {
 
 	fprintf(stderr, "usage: dhcp6c [-c configfile] [-dDfi] "
@@ -235,7 +233,7 @@ usage()
 /*------------------------------------------------------------*/
 
 void
-client6_init()
+client6_init(void)
 {
 	struct addrinfo hints, *res;
 	static struct sockaddr_in6 sa6_allagent_storage;
@@ -356,8 +354,7 @@ client6_init()
 }
 
 int
-client6_start(ifp)
-	struct dhcp6_if *ifp;
+client6_start(struct dhcp6_if *ifp)
 {
 	struct dhcp6_event *ev;
 
@@ -395,8 +392,7 @@ client6_start(ifp)
 }
 
 static void
-client6_startall(isrestart)
-	int isrestart;
+client6_startall(int isrestart)
 {
 	struct dhcp6_if *ifp;
 
@@ -412,8 +408,7 @@ client6_startall(isrestart)
 }
 
 static void
-free_resources(freeifp)
-	struct dhcp6_if *freeifp;
+free_resources(struct dhcp6_if *freeifp)
 {
 	struct dhcp6_if *ifp;
 
@@ -442,7 +437,7 @@ free_resources(freeifp)
 }
 
 static void
-check_exit()
+check_exit(void)
 {
 	struct dhcp6_if *ifp;
 
@@ -465,7 +460,7 @@ check_exit()
 }
 
 static void
-process_signals()
+process_signals(void)
 {
 	if ((sig_flags & SIGF_TERM)) {
 		exit_ok = 1;
@@ -483,7 +478,7 @@ process_signals()
 }
 
 static void
-client6_mainloop()
+client6_mainloop(void)
 {
 	struct timeval *w;
 	int ret, maxsock;
@@ -532,10 +527,7 @@ client6_mainloop()
 }
 
 static inline int
-get_val32(bpp, lenp, valp)
-	char **bpp;
-	int *lenp;
-	u_int32_t *valp;
+get_val32(char **bpp, int *lenp, u_int32_t *valp)
 {
 	char *bp = *bpp;
 	int len = *lenp;
@@ -554,11 +546,7 @@ get_val32(bpp, lenp, valp)
 }
 
 static inline int
-get_ifname(bpp, lenp, ifbuf, ifbuflen)
-	char **bpp;
-	int *lenp;
-	char *ifbuf;
-	int ifbuflen;
+get_ifname(char **bpp, int *lenp, char *ifbuf, int ifbuflen)
 {
 	char *bp = *bpp;
 	int len = *lenp, ifnamelen;
@@ -583,9 +571,7 @@ get_ifname(bpp, lenp, ifbuf, ifbuflen)
 }
 
 static int
-client6_do_ctlcommand(buf, len)
-	char *buf;
-	ssize_t len;
+client6_do_ctlcommand(char *buf, ssize_t len)
 {
 	struct dhcp6ctl *ctlhead;
 	u_int16_t command, version;
@@ -705,7 +691,7 @@ client6_do_ctlcommand(buf, len)
 }
 
 static void
-client6_reload()
+client6_reload(void)
 {
 	/* reload the configuration file */
 	if (cfparse(conffile) != 0) {
@@ -720,9 +706,7 @@ client6_reload()
 }
 
 static int
-client6_ifctl(ifname, command)
-	char *ifname;
-	u_int16_t command;
+client6_ifctl(char *ifname, u_int16_t command)
 {
 	struct dhcp6_if *ifp;
 
@@ -762,8 +746,7 @@ client6_ifctl(ifname, command)
 }
 
 static struct dhcp6_timer *
-client6_expire_refreshtime(arg)
-	void *arg;
+client6_expire_refreshtime(void *arg)
 {
 	struct dhcp6_if *ifp = arg;
 
@@ -777,8 +760,7 @@ client6_expire_refreshtime(arg)
 }
 
 struct dhcp6_timer *
-client6_timo(arg)
-	void *arg;
+client6_timo(void *arg)
 {
 	struct dhcp6_event *ev = (struct dhcp6_event *)arg;
 	struct dhcp6_if *ifp;
@@ -881,9 +863,7 @@ client6_timo(arg)
 }
 
 static int
-construct_confdata(ifp, ev)
-	struct dhcp6_if *ifp;
-	struct dhcp6_event *ev;
+construct_confdata(struct dhcp6_if *ifp, struct dhcp6_event *ev)
 {
 	struct ia_conf *iac;
 	struct dhcp6_eventdata *evd = NULL;
@@ -970,10 +950,8 @@ construct_confdata(ifp, ev)
 }
 
 static int
-construct_reqdata(ifp, optinfo, ev)
-	struct dhcp6_if *ifp;
-	struct dhcp6_optinfo *optinfo;
-	struct dhcp6_event *ev;
+construct_reqdata(struct dhcp6_if *ifp, struct dhcp6_optinfo *optinfo,
+    struct dhcp6_event *ev)
 {
 	struct ia_conf *iac;
 	struct dhcp6_eventdata *evd = NULL;
@@ -1066,8 +1044,7 @@ construct_reqdata(ifp, optinfo, ev)
 }
 
 static void
-destruct_iadata(evd)
-	struct dhcp6_eventdata *evd;
+destruct_iadata(struct dhcp6_eventdata *evd)
 {
 	struct dhcp6_list *ial;
 
@@ -1082,8 +1059,7 @@ destruct_iadata(evd)
 }
 
 static struct dhcp6_serverinfo *
-select_server(ev)
-	struct dhcp6_event *ev;
+select_server(struct dhcp6_event *ev)
 {
 	struct dhcp6_serverinfo *s;
 
@@ -1104,8 +1080,7 @@ select_server(ev)
 }
 
 static void
-client6_signal(sig)
-	int sig;
+client6_signal(int sig)
 {
 
 	switch (sig) {
@@ -1119,8 +1094,7 @@ client6_signal(sig)
 }
 
 void
-client6_send(ev)
-	struct dhcp6_event *ev;
+client6_send(struct dhcp6_event *ev)
 {
 	struct dhcp6_if *ifp;
 	char buf[BUFSIZ];
@@ -1335,8 +1309,7 @@ client6_send(ev)
 
 /* result will be a - b */
 static void
-tv_sub(a, b, result)
-	struct timeval *a, *b, *result;
+tv_sub(struct timeval *a, struct timeval *b, struct timeval *result)
 {
 	if (a->tv_sec < b->tv_sec ||
 	    (a->tv_sec == b->tv_sec && a->tv_usec < b->tv_usec)) {
@@ -1357,7 +1330,7 @@ tv_sub(a, b, result)
 }
 
 static void
-client6_recv()
+client6_recv(void)
 {
 	char rbuf[BUFSIZ], cmsgbuf[BUFSIZ];
 	struct msghdr mhdr;
@@ -1446,11 +1419,8 @@ client6_recv()
 }
 
 static int
-client6_recvadvert(ifp, dh6, len, optinfo)
-	struct dhcp6_if *ifp;
-	struct dhcp6 *dh6;
-	ssize_t len;
-	struct dhcp6_optinfo *optinfo;
+client6_recvadvert(struct dhcp6_if *ifp, struct dhcp6 *dh6,
+    ssize_t len, struct dhcp6_optinfo *optinfo)
 {
 	struct dhcp6_serverinfo *newserver, **sp;
 	struct dhcp6_event *ev;
@@ -1649,9 +1619,7 @@ client6_recvadvert(ifp, dh6, len, optinfo)
 }
 
 static struct dhcp6_serverinfo *
-find_server(ev, duid)
-	struct dhcp6_event *ev;
-	struct duid *duid;
+find_server(struct dhcp6_event *ev, struct duid *duid)
 {
 	struct dhcp6_serverinfo *s;
 
@@ -1664,11 +1632,8 @@ find_server(ev, duid)
 }
 
 static int
-client6_recvreply(ifp, dh6, len, optinfo)
-	struct dhcp6_if *ifp;
-	struct dhcp6 *dh6;
-	ssize_t len;
-	struct dhcp6_optinfo *optinfo;
+client6_recvreply(struct dhcp6_if *ifp, struct dhcp6 *dh6,
+    ssize_t len, struct dhcp6_optinfo *optinfo)
 {
 	struct dhcp6_listval *lv;
 	struct dhcp6_event *ev;
@@ -1884,9 +1849,7 @@ client6_recvreply(ifp, dh6, len, optinfo)
 }
 
 static struct dhcp6_event *
-find_event_withid(ifp, xid)
-	struct dhcp6_if *ifp;
-	u_int32_t xid;
+find_event_withid(struct dhcp6_if *ifp, u_int32_t xid)
 {
 	struct dhcp6_event *ev;
 
@@ -1900,11 +1863,8 @@ find_event_withid(ifp, xid)
 }
 
 static int
-process_auth(authparam, dh6, len, optinfo)
-	struct authparam *authparam;
-	struct dhcp6 *dh6;
-	ssize_t len;
-	struct dhcp6_optinfo *optinfo;
+process_auth(struct authparam *authparam, struct dhcp6 *dh6,
+    ssize_t len, struct dhcp6_optinfo *optinfo)
 {
 	struct keyinfo *key = NULL;
 	int authenticated = 0;
@@ -2026,9 +1986,7 @@ process_auth(authparam, dh6, len, optinfo)
 }
 
 static int
-set_auth(ev, optinfo)
-	struct dhcp6_event *ev;
-	struct dhcp6_optinfo *optinfo;
+set_auth(struct dhcp6_event *ev, struct dhcp6_optinfo *optinfo)
 {
 	struct authparam *authparam = ev->authparam;
 
