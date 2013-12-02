@@ -13,7 +13,7 @@ CFLAGS+=	-DSYSCONFDIR=\"/etc\" \
 		-DHAVE_TAILQ_FOREACH_REVERSE_OLD=1 \
 		-DHAVE_SA_LEN=1 \
 
-CFLAGS+=	-Wunused -Wshadow -Wcast-qual
+CFLAGS+=	-Wunused -Wshadow
 CFLAGS+=	-Wmissing-format-attribute -Wimplicit -Wnonnull
 CFLAGS+=	-Winit-self -Wmain -Wmissing-braces -Wsequence-point 
 CFLAGS+=	-Wreturn-type -Wtrigraphs -Wwrite-strings

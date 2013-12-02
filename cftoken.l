@@ -322,7 +322,7 @@ ecl		\}
 			yyterminate();
 		else {
 			yy_delete_buffer(YY_CURRENT_BUFFER);
-			/* free(incstack[incstackp + 1].path); XXXX */
+			free((char *)incstack[incstackp + 1].path);
 			configfilename = incstack[incstackp].path;
 			lineno = incstack[incstackp].lineno;
 			yy_switch_to_buffer(incstack[incstackp].state);
