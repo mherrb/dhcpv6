@@ -1591,6 +1591,14 @@ dhcp6_get_options(struct dhcp6opt *p, struct dhcp6opt *ep,
 			dhcp6_clear_list(&sublist);
 
 			break;
+		case DH6OPT_CLIENT_FQDN:
+			debugprintf(LOG_INFO, FNAME,
+			    "client fqdn option len %d flags 0x%02x", optlen,
+			    *cp);
+			if (optlen > 1)
+				debugprintf(LOG_INFO, FNAME,
+				    "client fqdn ...");
+			break;
 		default:
 			/* no option specific behavior */
 			debugprintf(LOG_INFO, FNAME,
