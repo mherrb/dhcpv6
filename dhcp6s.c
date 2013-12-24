@@ -36,6 +36,8 @@
 #include <sys/time.h>
 #include <time.h>
 #include <errno.h>
+#include <paths.h>
+#include <pwd.h>
 
 #include <net/if.h>
 
@@ -109,6 +111,8 @@ struct relayinfo {
 	struct dhcp6_vbuf relay_msg; /* relay message */
 };
 TAILQ_HEAD(relayinfolist, relayinfo);
+
+struct passwd *pw;
 
 static int debug = 0;
 static sig_atomic_t sig_flags = 0;
@@ -321,8 +325,19 @@ main(int argc, char *argv[])
 		dhcp6_move_list(&dnslist, &arg_dnslist);
 		TAILQ_INIT(&arg_dnslist);
 	}
+	if ((pw = getpwnam("_dhcp")) == NULL)
+		debugprintf(LOG_ERR, FNAME, "user \"_dhcp\" not found");
 
 	server6_init();
+
+	if (chroot(_PATH_VAREMPTY) == -1)
+		debugprintf(LOG_ERR, FNAME, "chroot %s: %m", _PATH_VAREMPTY);
+	if (chdir("/") == -1)
+		debugprintf(LOG_ERR, FNAME, "chdir(\"/\"): %m");
+	if (setgroups(1, &pw->pw_gid) ||
+	    setresgid(pw->pw_gid, pw->pw_gid, pw->pw_gid) ||
+	    setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid))
+		debugprintf(LOG_ERR, FNAME, "can't drop privileges: %m");
 
 	server6_mainloop();
 	exit(0);
