@@ -31,6 +31,15 @@ WIDE-DHCPv6
 	temporary address allocation by DHCPv6, and there is no plan to
 	implement that feature at the moment.
 
+TODO
+	The following standards are not yet implementented:
+	- RFC3736: Stateless DHCP service for IPv6
+	- RFC4704: Fully Qualified Domain Name (FQDN) Option
+	- RFC5007: DHCPv6 Lease query
+	- RFC6221: Lightweight DHCPv6 Relay Agent
+
+	See also http://ipamworldwide.com/rfcs/51.html
+
 Bug Reports and Mailing Lists
 
 	Bugs reports should be put to the Bug Tracking System at 
