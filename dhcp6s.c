@@ -138,7 +138,6 @@ static struct dhcp6_list arg_dnslist;
 static const char *ctlkeyfile = DEFAULT_KEYFILE;
 static struct keyinfo *ctlkey = NULL;
 static int ctldigestlen;
-static const char *pid_file = DHCP6S_PIDFILE;
 
 static inline int get_val32(char **, int *, u_int32_t *);
 static inline int get_val(char **, int *, void *, size_t);
@@ -273,9 +272,6 @@ main(int argc, char *argv[])
 		case 'p':
 			ctlport = optarg;
 			break;
-		case 'P':
-			pid_file = optarg;
-			break;
 		default:
 			usage();
 			/* NOTREACHED */
@@ -306,13 +302,6 @@ main(int argc, char *argv[])
 	if (foreground == 0) {
 		if (daemon(0, 0) < 0)
 			err(1, "daemon");
-	}
-
-	/* dump current PID */
-	pid = getpid();
-	if ((pidfp = fopen(pid_file, "w")) != NULL) {
-		fprintf(pidfp, "%d\n", pid);
-		fclose(pidfp);
 	}
 
 	/* prohibit a mixture of old and new style of DNS server config */
@@ -586,7 +575,6 @@ static void
 process_signals(void)
 {
 	if ((sig_flags & SIGF_TERM)) {
-		unlink(pid_file);
 		exit(0);
 	}
 }
