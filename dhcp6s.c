@@ -214,11 +214,10 @@ static inline char *clientstr(struct host_conf *, struct duid *);
 int
 main(int argc, char *argv[])
 {
-	int ch, pid;
+	int ch;
 	struct in6_addr a;
 	struct dhcp6_listval *dlv;
 	char *progname;
-	FILE *pidfp;
 
 	if ((progname = strrchr(*argv, '/')) == NULL)
 		progname = *argv;
@@ -238,7 +237,7 @@ main(int argc, char *argv[])
 	TAILQ_INIT(&bcmcslist);
 	TAILQ_INIT(&bcmcsnamelist);
 
-	while ((ch = getopt(argc, argv, "c:dDfk:n:p:P:")) != -1) {
+	while ((ch = getopt(argc, argv, "c:dDfk:n:p:")) != -1) {
 		switch (ch) {
 		case 'c':
 			conffile = optarg;
@@ -337,7 +336,7 @@ usage(void)
 {
 	fprintf(stderr,
 	    "usage: dhcp6s [-c configfile] [-dDf] [-k ctlkeyfile] "
-	    "[-p ctlport] [-P pidfile] intface\n");
+	    "[-p ctlport] interface\n");
 	exit(0);
 }
 
