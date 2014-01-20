@@ -134,7 +134,6 @@ static int rmsgctllen;
 static const char *conffile = DHCP6S_CONF;
 static char *rmsgctlbuf;
 static struct duid server_duid;
-static struct dhcp6_list arg_dnslist;
 static const char *ctlkeyfile = DEFAULT_KEYFILE;
 static struct keyinfo *ctlkey = NULL;
 static int ctldigestlen;
@@ -215,8 +214,6 @@ int
 main(int argc, char *argv[])
 {
 	int ch;
-	struct in6_addr a;
-	struct dhcp6_listval *dlv;
 	char *progname;
 
 	if ((progname = strrchr(*argv, '/')) == NULL)
@@ -224,7 +221,6 @@ main(int argc, char *argv[])
 	else
 		progname++;
 
-	TAILQ_INIT(&arg_dnslist);
 	TAILQ_INIT(&dnslist);
 	TAILQ_INIT(&dnsnamelist);
 	TAILQ_INIT(&siplist);
@@ -237,7 +233,7 @@ main(int argc, char *argv[])
 	TAILQ_INIT(&bcmcslist);
 	TAILQ_INIT(&bcmcsnamelist);
 
-	while ((ch = getopt(argc, argv, "c:dDfk:n:p:")) != -1) {
+	while ((ch = getopt(argc, argv, "c:dDfk:p:")) != -1) {
 		switch (ch) {
 		case 'c':
 			conffile = optarg;
@@ -253,20 +249,6 @@ main(int argc, char *argv[])
 			break;
 		case 'k':
 			ctlkeyfile = optarg;
-			break;
-		case 'n':
-			warnx("-n dnsserv option was obsoleted.  "
-			    "use configuration file.");
-			if (inet_pton(AF_INET6, optarg, &a) != 1) {
-				errx(1, "invalid DNS server %s", optarg);
-				/* NOTREACHED */
-			}
-			if ((dlv = malloc(sizeof *dlv)) == NULL) {
-				errx(1, "malloc failed for a DNS server");
-				/* NOTREACHED */
-			}
-			dlv->val_addr6 = a;
-			TAILQ_INSERT_TAIL(&arg_dnslist, dlv, link);
 			break;
 		case 'p':
 			ctlport = optarg;
@@ -303,16 +285,6 @@ main(int argc, char *argv[])
 			err(1, "daemon");
 	}
 
-	/* prohibit a mixture of old and new style of DNS server config */
-	if (!TAILQ_EMPTY(&arg_dnslist)) {
-		if (!TAILQ_EMPTY(&dnslist)) {
-			debugprintf(LOG_INFO, FNAME, "do not specify DNS servers "
-			    "both by command line and by configuration file.");
-			exit(1);
-		}
-		dhcp6_move_list(&dnslist, &arg_dnslist);
-		TAILQ_INIT(&arg_dnslist);
-	}
 	if ((pw = getpwnam("_dhcp")) == NULL)
 		debugprintf(LOG_ERR, FNAME, "user \"_dhcp\" not found");
 
