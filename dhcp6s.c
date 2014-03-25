@@ -391,15 +391,6 @@ server6_init(void)
 		    strerror(errno));
 		exit(1);
 	}
-#ifdef IPV6_RECVPKTINFO
-	if (setsockopt(insock, IPPROTO_IPV6, IPV6_RECVPKTINFO, &on,
-		       sizeof(on)) < 0) {
-		debugprintf(LOG_ERR, FNAME,
-		    "setsockopt(inbound, IPV6_RECVPKTINFO): %s",
-		    strerror(errno));
-		exit(1);
-	}
-#else
 	if (setsockopt(insock, IPPROTO_IPV6, IPV6_PKTINFO, &on,
 		       sizeof(on)) < 0) {
 		debugprintf(LOG_ERR, FNAME,
@@ -407,15 +398,6 @@ server6_init(void)
 		    strerror(errno));
 		exit(1);
 	}
-#endif
-#ifdef IPV6_V6ONLY
-	if (setsockopt(insock, IPPROTO_IPV6, IPV6_V6ONLY,
-	    &on, sizeof(on)) < 0) {
-		debugprintf(LOG_ERR, FNAME,
-		    "setsockopt(inbound, IPV6_V6ONLY): %s", strerror(errno));
-		exit(1);
-	}
-#endif
 	if (bind(insock, res->ai_addr, res->ai_addrlen) < 0) {
 		debugprintf(LOG_ERR, FNAME, "bind(insock): %s", strerror(errno));
 		exit(1);
